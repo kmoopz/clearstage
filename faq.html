@@ -59,11 +59,11 @@
       <div class="faq-page-list">
         <details class="faq-item" data-category="install" open>
           <summary><span class="qnum">01</span> 澄幕支持哪些系统？<span class="plus"></span></summary>
-          <div class="faq-answer"><p>0.1.0 公开提供 <b>Windows 10 / 11 x64</b> 便携包。macOS 与 Linux 已有构建配置，但尚未提供签名安装包，需从源码构建。当前不提供移动端或网页版。</p></div>
+          <div class="faq-answer"><p>0.1.0 提供 <b>Windows 10 / 11 x64</b> 安装包与便携包、<b>Linux x64</b> AppImage，以及 <b>macOS 12+</b> 的 Intel / Apple Silicon zip。Windows 使用本地自签名证书；Linux 未签名；macOS 为 ad-hoc 签名、未公证。当前不提供移动端或网页版。</p></div>
         </details>
         <details class="faq-item" data-category="install" id="faq-security">
           <summary><span class="qnum">02</span> Windows 提示未知发布者 / 点击“仍要运行”没反应怎么办？<span class="plus"></span></summary>
-          <div class="faq-answer"><p>0.1.0 使用 ClearStage 本地自签名证书，不是 CA 证书。证书已内置在安装包中，安装程序会自动导入当前用户受信任存储；便携包内也附带证书和 <code>Install-Certificate.cmd</code>，无需二次下载。</p><p>首次运行安装包时 Windows 仍可能提示未知发布者，因为证书要在安装程序启动后才能写入信任存储；选择“更多信息 → 仍要运行”即可。安装后主程序会被识别为 ClearStage 发布者。如果点击“仍要运行”后没有反应，通常是因为在压缩包里直接双击 EXE，或解压到了权限受限的目录。请改用安装程序，或把整个 zip 解压到桌面等普通目录再运行。</p></div>
+          <div class="faq-answer"><p>Windows 0.1.0 使用 ClearStage 本地自签名证书，不是 CA 证书。证书已内置在安装包中，安装程序会自动导入当前用户受信任存储；便携包内也附带证书和 <code>Install-Certificate.cmd</code>，无需二次下载。</p><p>首次运行安装包时 Windows 仍可能提示未知发布者，因为证书要在安装程序启动后才能写入信任存储；选择“更多信息 → 仍要运行”即可。安装后主程序会被识别为 ClearStage 发布者。如果点击“仍要运行”后没有反应，通常是因为在压缩包里直接双击 EXE，或解压到了权限受限的目录。请改用安装程序，或把整个 zip 解压到桌面等普通目录再运行。</p><p>macOS 构建使用 ad-hoc 签名，未公证；首次打开需在 Finder 右键「打开」或执行 <code>xattr -cr</code>。Linux AppImage 未签名，若沙箱权限报错请先检查用户命名空间。</p></div>
         </details>
         <details class="faq-item" data-category="install">
           <summary><span class="qnum">03</span> 启动后白屏或窗口一闪而过？<span class="plus"></span></summary>

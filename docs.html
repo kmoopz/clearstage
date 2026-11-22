@@ -85,8 +85,8 @@
           <table class="doc-table">
             <tr><th>系统</th><th>要求</th></tr>
             <tr><td>Windows</td><td>Windows 10 1903+ / Windows 11，x64，4 GB 内存以上</td></tr>
-            <tr><td>macOS</td><td>从源码构建；当前未提供签名 .dmg</td></tr>
-            <tr><td>Linux</td><td>从源码构建；当前未提供 AppImage</td></tr>
+            <tr><td>Linux</td><td>x64，AppImage 需要 FUSE；若发行版限制用户命名空间，见下方沙箱说明</td></tr>
+            <tr><td>macOS</td><td>macOS 12+，Intel 或 Apple Silicon；当前为 ad-hoc 签名、未公证构建</td></tr>
             <tr><td>磁盘</td><td>建议为录制预留至少 20 GB；原画录制约 1.5–3 GB / 小时</td></tr>
             <tr><td>可选组件</td><td>FFmpeg 5+（精确切片、歌曲音频导出）</td></tr>
           </table>
@@ -100,6 +100,21 @@ certutil -user -addstore TrustedPublisher ClearStage-CodeSigning.cer</code></pre
 
           <h3>便携版</h3>
           <p>把 <code>ClearStage-0.1.0-win-x64.zip</code> 完整解压到桌面或普通用户目录，再双击 <code>ClearStage.exe</code>。便携版同样包含已签名的主程序，设置与登录数据仍写入用户目录。</p>
+
+          <h3 id="linux">安装 Linux 版</h3>
+          <p>从下载页获取 <code>ClearStage-0.1.0-linux-x64.AppImage</code>，赋予执行权限并运行：</p>
+          <pre><code>chmod +x ClearStage-0.1.0-linux-x64.AppImage
+./ClearStage-0.1.0-linux-x64.AppImage</code></pre>
+          <p>如果系统未安装 FUSE，可使用 AppImage 的解包运行模式：</p>
+          <pre><code>./ClearStage-0.1.0-linux-x64.AppImage --appimage-extract-and-run</code></pre>
+          <div class="callout warn">Linux 构建未做代码签名。若遇到 Chromium 沙箱权限错误，先确认系统启用了用户命名空间；仍无法启动时可临时追加 <code>--no-sandbox</code>。长期关闭沙箱会降低隔离强度，不建议作为默认方案。</div>
+
+          <h3 id="macos">安装 macOS 版</h3>
+          <p>下载与你机器架构匹配的 <code>ClearStage-0.1.0-mac-x64.zip</code>（Intel）或 <code>ClearStage-0.1.0-mac-arm64.zip</code>（Apple Silicon）。解压后把「澄幕.app」拖进 Applications。</p>
+          <p>当前 macOS 构建使用 ad-hoc 签名，没有 Apple Developer ID，也未公证。首次打开如果被 Gatekeeper 拦截，可在 Finder 中右键「打开」，或执行：</p>
+          <pre><code>xattr -cr "/Applications/澄幕.app"
+open "/Applications/澄幕.app"</code></pre>
+          <div class="callout">要获得不带 Gatekeeper 提示的正式分发包，需要 Apple Developer 账号完成 Developer ID 签名与 notarization；当前版本不具备该项凭证。macOS 构建的媒体代理与录制逻辑与 Windows 相同，但仅建议在测试环境使用。</div>
 
           <h3>安装 FFmpeg（可选）</h3>
           <p>澄幕会先在设置路径、安装资源目录和系统 PATH 中寻找 FFmpeg。没有检测到时，可以手动安装：</p>
@@ -320,16 +335,18 @@ https://live.bilibili.com/blanc/6
         <section id="build">
           <span class="doc-kicker">16 / SOURCE BUILD</span>
           <h2>源码构建</h2>
-          <p>澄幕基于 Electron + React + TypeScript。源码构建需要 Node.js 22+ 与 npm。</p>
-          <pre><code># 获取源码后
-npm install
+          <p>澄幕基于 Electron + React + TypeScript。源码位于 GitHub 仓库的 <code>app/</code> 目录，构建需要 Node.js 22+ 与 npm。</p>
+          <pre><code>cd app
+npm ci
 npm run dev          # 开发模式
 npm run typecheck    # 类型检查
 npm test             # 单元测试
 npm run build        # 构建渲染层与主进程
-npm run package:win  # 打包 Windows 版本（electron-builder）</code></pre>
-          <p>macOS / Linux 可分别执行 <code>npm run package:mac</code> 与 <code>npm run package:linux</code>（需要对应平台的构建环境）。打包配置已写在 <code>package.json</code> 的 <code>build</code> 字段。</p>
-          <div class="callout">当前公开下载提供已签名的 Windows 安装包与便携包。签名是 ClearStage 本地自签名证书，不是 CA 证书；跨电脑分发前，请让用户安装附带的证书。macOS / Linux 仍未签名、未公证，因此官网不提供直接下载。</div>
+npm run package:win  # Windows 安装包与便携包
+npm run package:mac  # macOS（需在 macOS 上执行）
+npm run package:linux # Linux（需在 Linux 上执行）</code></pre>
+          <p>跨平台产物由仓库的 <a href="https://github.com/kmoopz/clearstage/actions/workflows/build-platforms.yml">Build macOS and Linux packages</a> 工作流构建。macOS 产物使用 ad-hoc 签名，Linux AppImage 不签名；两者都未经过平台公证或 CA 签名。</p>
+          <div class="callout">Windows 安装包使用 ClearStage 本地自签名证书，首次运行仍可能提示未知发布者。macOS / Linux 的 Gatekeeper、沙箱和发行版限制由各自系统策略决定；如果下载后无法启动，请附上系统版本、架构和完整错误信息反馈。</div>
           <p class="doc-footer-note">ClearStage 0.1.0 · Documentation last updated 2026-11-22. 第三方工具，与哔哩哔哩无隶属关系。</p>
         </section>
       </article>

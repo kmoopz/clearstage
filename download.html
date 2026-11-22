@@ -32,10 +32,10 @@
   <main class="subpage">
     <section class="subhero">
       <div class="container">
-        <span class="eyebrow">DOWNLOAD · WINDOWS X64</span>
+        <span class="eyebrow">DOWNLOAD · WINDOWS / LINUX / MACOS</span>
         <h1>带一块屏幕回去，<br /><em>把直播放到桌上。</em></h1>
-        <p>0.1.0 为公开测试版，免费、无需注册。推荐使用安装程序；也可以下载便携包。录制与数据都留在你自己的电脑里。</p>
-        <div class="subhero-meta"><span>Windows 10 / 11 x64</span><span>Public Beta</span><span>本地代码签名</span></div>
+        <p>0.1.0 为公开测试版，免费、无需注册。Windows 提供安装程序与便携包；Linux 提供 AppImage；macOS 提供 Intel 与 Apple Silicon 两个 zip。录制与数据都留在你自己的电脑里。</p>
+        <div class="subhero-meta"><span>Windows · Linux · macOS</span><span>Public Beta</span><span>Windows 本地签名</span></div>
       </div>
     </section>
 
@@ -70,10 +70,30 @@
             <div class="release-list"><span>免安装</span><span>解压即用</span><span>x64</span><span>包含已签名 EXE</span></div>
           </div>
 
-          <div class="release-card">
-            <div class="release-title"><div class="release-icon">⌘</div><div><h3>macOS / Linux</h3><span>Build from source</span></div></div>
-            <p class="muted" style="margin-top:13px;font-size:11px;line-height:1.8">当前未提供已签名安装包。源码中包含 macOS DMG 与 Linux AppImage 的 electron-builder 配置；需要对应平台环境、Node.js 22+ 与 npm 自行构建。</p>
-            <div class="release-actions"><a class="btn btn-ghost" href="docs.html#build">查看构建说明 <span aria-hidden="true">↗</span></a></div>
+          <div class="release-card" id="linux">
+            <div class="release-title">
+              <div class="release-icon">⌁</div>
+              <div><h3>Linux x64 AppImage</h3><span>ClearStage-0.1.0-linux-x64.AppImage</span></div>
+            </div>
+            <p class="muted" style="margin-top:13px;font-size:11px;line-height:1.8">下载后 <code style="color:var(--paper-soft)">chmod +x</code> 再运行。AppImage 免安装，保留应用与数据在用户目录。Linux 构建未做代码签名；若系统未启用用户命名空间导致沙箱错误，可临时用 <code>--no-sandbox</code> 启动。</p>
+            <div class="release-actions">
+              <a class="btn btn-ghost" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-0.1.0-linux-x64.AppImage">下载 AppImage <span aria-hidden="true">↓</span></a>
+              <a class="btn btn-ghost" href="docs.html#linux">Linux 安装说明</a>
+            </div>
+            <div class="release-list"><span>x64</span><span>AppImage</span><span>免安装</span><span>未签名</span></div>
+          </div>
+
+          <div class="release-card" id="macos">
+            <div class="release-title">
+              <div class="release-icon">⌘</div>
+              <div><h3>macOS x64 / Apple Silicon</h3><span>ClearStage-0.1.0-mac-*.zip</span></div>
+            </div>
+            <p class="muted" style="margin-top:13px;font-size:11px;line-height:1.8">解压后将「澄幕.app」拖入 Applications。当前构建使用 ad-hoc 签名，没有 Apple Developer ID 公证；首次打开如被 Gatekeeper 拦截，请在 Finder 中右键选择「打开」，或执行 <code style="color:var(--paper-soft)">xattr -cr "/Applications/澄幕.app"</code>。</p>
+            <div class="release-actions">
+              <a class="btn btn-ghost" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-0.1.0-mac-arm64.zip">Apple Silicon <span aria-hidden="true">↓</span></a>
+              <a class="btn btn-ghost" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-0.1.0-mac-x64.zip">Intel <span aria-hidden="true">↓</span></a>
+            </div>
+            <div class="release-list"><span>arm64</span><span>x64</span><span>ad-hoc 签名</span><span>未公证</span></div>
           </div>
 
           <h3 style="margin-top:35px;font-size:15px;font-weight:500">0.1.0 更新内容</h3>
@@ -92,8 +112,8 @@
         <aside class="release-side">
           <h3>系统要求</h3>
           <table class="requirement-table">
-            <tr><td>操作系统</td><td>Windows 10 1903+ / 11</td></tr>
-            <tr><td>架构</td><td>x64</td></tr>
+            <tr><td>操作系统</td><td>Windows 10 1903+ / 11；Linux x64；macOS 12+</td></tr>
+            <tr><td>架构</td><td>x64；macOS 另有 arm64</td></tr>
             <tr><td>内存</td><td>4 GB 起，8 GB 推荐</td></tr>
             <tr><td>磁盘</td><td>1 GB 应用 + 录制空间</td></tr>
             <tr><td>网络</td><td>稳定宽带，建议 20 Mbps+</td></tr>
@@ -105,12 +125,21 @@
             <div class="checksum"><code id="sha-installer">89d5944d800f8891afb22c3760e332a493589e882bff918efadde32815625e01</code><button type="button" data-copy="89d5944d800f8891afb22c3760e332a493589e882bff918efadde32815625e01" id="copy-installer">复制</button></div>
             <label style="margin-top:11px">PORTABLE ZIP SHA-256</label>
             <div class="checksum"><code id="sha-zip">9f786d1c23e7258ea438b0b91e7e88711bec53c29a9bc898c369dd9443cfca69</code><button type="button" data-copy="9f786d1c23e7258ea438b0b91e7e88711bec53c29a9bc898c369dd9443cfca69" id="copy-zip">复制</button></div>
+            <label style="margin-top:11px">LINUX APPIMAGE SHA-256</label>
+            <div class="checksum"><code id="sha-linux">8531abc2248af7d255a4e1dd2d43aa9d2531c03e12a02b11d2f240eb2fe4bda3</code><button type="button" data-copy="8531abc2248af7d255a4e1dd2d43aa9d2531c03e12a02b11d2f240eb2fe4bda3" id="copy-linux">复制</button></div>
+            <label style="margin-top:11px">MACOS ARM64 SHA-256</label>
+            <div class="checksum"><code id="sha-mac-arm">c77e964a239e8ed91b91ebd814db65a20f51fbcd5e39d175b1cf516199d148d7</code><button type="button" data-copy="c77e964a239e8ed91b91ebd814db65a20f51fbcd5e39d175b1cf516199d148d7" id="copy-mac-arm">复制</button></div>
+            <label style="margin-top:11px">MACOS X64 SHA-256</label>
+            <div class="checksum"><code id="sha-mac-x64">20d2663889ff53b58391f5d302b2181a247bb7990aee7a42830ba6153e40c625</code><button type="button" data-copy="20d2663889ff53b58391f5d302b2181a247bb7990aee7a42830ba6153e40c625" id="copy-mac-x64">复制</button></div>
           </div>
 
-          <div class="callout warn" style="margin-top:18px">证书已随安装包和便携包提供，安装程序会自动导入，便携包可运行 <code>Install-Certificate.cmd</code>，<b>无需二次下载</b>。首次运行安装包时 Windows 仍可能提示未知发布者，因为证书要在安装程序运行后才写入信任存储；选择“仍要运行”即可。自签名证书不是 CA 证书。<a href="downloads/SIGNING.txt" style="color:var(--amber)">签名与校验说明</a>。请勿在压缩包内直接双击 EXE，也不要从受限项目目录运行。</div>
+          <div class="callout warn" style="margin-top:18px">Windows 安装包使用 ClearStage 本地自签名证书，证书已内置并自动导入，无需二次下载；首次运行仍可能提示未知发布者，选择「仍要运行」即可。macOS 为 ad-hoc 签名、未公证；Linux AppImage 未签名。三个平台都无法在不购买 CA / Apple Developer 证书的情况下完全消除系统首次安全提示。<a href="downloads/SIGNING.txt" style="color:var(--amber)">签名与校验说明</a>。</div>
 
           <h3 style="margin-top:28px">安装或解压之后</h3>
           <ul class="release-notes">
+            <li><b>Windows：</b>运行安装程序，或在完整解压便携包后运行 EXE；不要在压缩包内直接双击。</li>
+            <li><b>Linux：</b><code>chmod +x ClearStage-0.1.0-linux-x64.AppImage</code> 后运行；沙箱权限报错见文档。</li>
+            <li><b>macOS：</b>解压后把「澄幕.app」拖入 Applications；首次被拦截时右键「打开」或执行 <code>xattr -cr</code>。</li>
             <li>公开 B 站画面可直接观看；更高画质、弹幕与更完整动态需登录自己的 B 站账号。</li>
             <li>通用直链仅支持播放与录制，不解析弹幕或主播数据。</li>
             <li>设置录制目录；需要精确切片时安装 FFmpeg。</li>

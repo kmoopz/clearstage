@@ -1,30 +1,33 @@
-ClearStage 0.1.0 — Windows code signing notes
-=============================================
+ClearStage 0.1.0 — platform signing notes
+=========================================
 
-Certificate subject : CN=ClearStage Local Code Signing, O=ClearStage
-Certificate type    : Self-signed code-signing certificate (not a CA certificate)
-Thumbprint          : FDEDC7F1FAA58A685DB9D2BDD967E7B8B65C1D72
-Validity            : 2026-11-22 to 2029-11-22
-Public certificate  : ClearStage-CodeSigning.cer
+Windows: ClearStage Local Code Signing (self-signed, not a CA)
+- Subject: CN=ClearStage Local Code Signing, O=ClearStage
+- Thumbprint: FDEDC7F1FAA58A685DB9D2BDD967E7B8B65C1D72
+- Validity: 2026-11-22 to 2029-11-22
+- The installer contains ClearStage-CodeSigning.cer and imports it into
+  CurrentUser\Root and CurrentUser\TrustedPublisher automatically.
+- The portable ZIP contains the certificate and Install-Certificate.cmd.
+- The app EXE and installer are timestamped and report "Valid" after the
+  certificate is trusted.
+- Windows checks the installer before the bundled certificate can be imported;
+  a one-time unknown-publisher prompt is therefore still possible on first run.
 
-Bundled trust setup:
-- The NSIS installer contains ClearStage-CodeSigning.cer and automatically imports
-  it into CurrentUser\Root and CurrentUser\TrustedPublisher during installation.
-- The portable ZIP also contains ClearStage-CodeSigning.cer and
-  Install-Certificate.cmd. Run that script once to trust the publisher.
-- The app EXE and installer are timestamped and report "Valid" via Authenticode
-  after the certificate is trusted.
+macOS: ad-hoc signed, not notarized
+- The .app bundle is signed with "codesign --sign -" (ad-hoc) so Gatekeeper can
+  evaluate the bundle, but it has no Apple Developer ID and no notarization.
+- On first open, use Finder > Open, or run: xattr -cr "/Applications/澄幕.app"
+- A no-warning public distribution requires an Apple Developer account, a
+  Developer ID Application certificate, and notarization.
 
-First run on another PC:
-- Windows checks the installer signature before the installer can add the
-  certificate, so a self-signed build can still show an unknown-publisher or
-  SmartScreen warning on the very first run. Choose "More info -> Run anyway".
-- After installation, the app and later launches are recognized as ClearStage.
-- This cannot be fully removed without a CA-issued code-signing certificate.
+Linux: unsigned
+- The AppImage is not signed.
+- If Chromium reports a sandbox error, check unprivileged user namespaces first;
+  a temporary workaround is to append --no-sandbox, which weakens isolation.
 
-Manual certificate commands (only needed for repair):
+Verify Windows:
+  signtool verify /pa /v ClearStage-Setup-0.1.0.exe
+
+Manual Windows certificate commands (repair only):
   certutil -user -addstore Root ClearStage-CodeSigning.cer
   certutil -user -addstore TrustedPublisher ClearStage-CodeSigning.cer
-
-Verify:
-  signtool verify /pa /v ClearStage-Setup-0.1.0.exe

@@ -27,7 +27,7 @@
         <a href="faq.html">常见问题</a>
       </nav>
       <div class="header-actions">
-        <span class="header-version">v0.1.0 · Windows</span>
+        <span class="header-version">v0.1.0 · 多平台</span>
         <a class="btn btn-primary btn-sm" href="#download">下载澄幕 <span aria-hidden="true">↓</span></a>
         <button class="mobile-toggle" type="button" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
       </div>
@@ -49,11 +49,11 @@
             多路纯净画面，本地留存，风格由你。没有推荐流，没有多余的窗口。
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#download">下载 Windows 版 <span aria-hidden="true">↓</span></a>
+            <a class="btn btn-primary" href="#download">下载澄幕 <span aria-hidden="true">↓</span></a>
             <a class="btn btn-ghost" href="docs.html">看看怎么用 <span aria-hidden="true">↗</span></a>
           </div>
           <div class="hero-meta">
-            <span>Windows 10 / 11 · x64</span>
+            <span>Windows · Linux · macOS</span>
             <span>本地优先</span>
             <span>无订阅</span>
           </div>
@@ -343,15 +343,15 @@
             <div class="download-copy">
               <span class="eyebrow">PUBLIC BETA · v0.1.0</span>
               <h2>把澄幕，<br />带回你的桌面。</h2>
-              <p>Windows 10 / 11 首发。免费公测，本地功能不设订阅。运行安装程序，或解压便携包，从 B 站直播间开始。</p>
+              <p>Windows、Linux 与 macOS 现已提供 0.1.0 公测构建。免费公测，本地功能不设订阅。Windows 推荐安装程序，Linux 使用 AppImage，macOS 使用对应架构的 zip。</p>
               <div class="download-actions">
                 <a class="btn btn-primary" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-Setup-0.1.0.exe" download>下载 Windows 安装包 <span aria-hidden="true">↓</span></a>
-                <a class="btn btn-ghost" href="docs.html#install">安装与证书说明 <span aria-hidden="true">↗</span></a>
+                <a class="btn btn-ghost" href="download.html">全部平台下载 <span aria-hidden="true">↗</span></a>
               </div>
               <div class="download-meta">
-                <span>Windows x64</span>
-                <span>安装包约 108 MB</span>
-                <span>本地代码签名</span>
+                <span>Windows / Linux / macOS</span>
+                <span>Windows 已签名</span>
+                <span>本地优先</span>
                 <span>数据留在本机</span>
               </div>
             </div>
@@ -368,15 +368,20 @@
                 <a class="artifact-link" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-0.1.0-win-x64.zip" download>下载 ↓</a>
               </div>
               <div class="artifact-row">
+                <div class="artifact-icon">⌁</div>
+                <div class="artifact-main"><b>Linux AppImage</b><span>ClearStage-0.1.0-linux-x64.AppImage</span></div>
+                <a class="artifact-link" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-0.1.0-linux-x64.AppImage">下载 ↓</a>
+              </div>
+              <div class="artifact-row">
                 <div class="artifact-icon">⌘</div>
-                <div class="artifact-main"><b>签名证书</b><span>ClearStage-CodeSigning.cer · 自签名说明</span></div>
-                <a class="artifact-link" href="downloads/ClearStage-CodeSigning.cer" download>下载证书 ↓</a>
+                <div class="artifact-main"><b>macOS x64 / Apple Silicon</b><span>ClearStage-0.1.0-mac-*.zip · ad-hoc 签名</span></div>
+                <a class="artifact-link" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-0.1.0-mac-arm64.zip">下载 ↓</a>
               </div>
               <div class="checksum">
                 <code id="release-sha">89d5944d800f8891afb22c3760e332a493589e882bff918efadde32815625e01</code>
                 <button type="button" data-copy="89d5944d800f8891afb22c3760e332a493589e882bff918efadde32815625e01" id="copy-sha">复制</button>
               </div>
-              <p class="download-note">安装包已内置 ClearStage 代码签名证书，并在安装时导入当前用户的受信任存储；便携包内也附带证书和 <code>Install-Certificate.cmd</code>，不需要再次下载证书。首次运行未受信任的安装包时，Windows 可能仍提示未知发布者（证书要在安装程序运行后才生效），选择“仍要运行”即可；自签名不是 CA 证书，无法在首次运行前获得系统信任。SHA-256 可在 <a href="download.html">下载页</a> 核对。</p>
+              <p class="download-note">Windows 安装包已内置 <a href="downloads/ClearStage-CodeSigning.cer" download>ClearStage 代码签名证书</a> 并自动导入，便携包也附带证书和 <code>Install-Certificate.cmd</code>；macOS 为 ad-hoc 签名，Linux 未签名，均未公证。首次运行未受信任的安装包时，Windows 可能仍提示未知发布者，选择“仍要运行”即可；彻底消除首次提示需要 CA 证书。SHA-256 可在 <a href="download.html">下载页</a> 核对。</p>
             </div>
           </div>
         </div>
@@ -421,10 +426,10 @@
       <div class="container">
         <div class="closing-inner" data-reveal>
           <h2>直播很长，<br />桌面应该安静一点。</h2>
-          <p>澄幕 ClearStage · Windows 0.1.0 Public Beta</p>
+          <p>澄幕 ClearStage · Windows / Linux / macOS 0.1.0 Public Beta</p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-Setup-0.1.0.exe" download>下载 Windows 安装包 <span aria-hidden="true">↓</span></a>
-            <a class="btn btn-ghost" href="docs.html">阅读文档 <span aria-hidden="true">↗</span></a>
+            <a class="btn btn-ghost" href="download.html">Linux / macOS <span aria-hidden="true">↗</span></a>
           </div>
         </div>
       </div>
