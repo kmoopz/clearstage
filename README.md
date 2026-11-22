@@ -23,11 +23,14 @@
 
 ## 平台与下载
 
-| 平台 | 状态 | 安装方式 |
+最新发布：https://github.com/kmoopz/clearstage/releases/tag/v0.1.0
+
+| 平台 | 直接下载 | 安装方式 |
 | --- | --- | --- |
-| Windows 10 / 11 x64 | 已测试，推荐 | 安装包：运行 Setup，自动创建快捷方式；便携包：完整解压后运行 `ClearStage.exe` |
-| Linux x64 | GitHub Actions 构建 | AppImage：下载后 `chmod +x` 并运行；或从源码构建 |
-| macOS x64 / Apple Silicon | GitHub Actions 构建，未公证 | 解压 zip，首次运行需在 Finder 中右键「打开」，或执行 `xattr -cr` 后打开 |
+| Windows 10 / 11 x64 | [安装程序](https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-Setup-0.1.0.exe) · [便携包](https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-0.1.0-win-x64.zip) | 安装程序自动创建快捷方式；便携包完整解压后运行 |
+| Linux x64 | [AppImage](https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-0.1.0-linux-x64.AppImage) | `chmod +x` 后运行，见下文 |
+| macOS Apple Silicon | [arm64 zip](https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-0.1.0-mac-arm64.zip) | 解压后拖入 Applications |
+| macOS Intel | [x64 zip](https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-0.1.0-mac-x64.zip) | 解压后拖入 Applications |
 
 Windows 安装包和主程序已签名，但使用的是 **ClearStage 本地自签名证书**，不是 CA 证书：
 
