@@ -1,6 +1,6 @@
 # ClearStage 0.1.0 release
-3a5ef04aabd340d23bd804093bd300665e933ef97b5d60c3c6cc5764d70c6edc  ClearStage-Setup-0.1.0.exe
-0f95513cee7c0fd21e4fe7cc86d80ac23600155f3adb32d698fffa7ce2c397ce  ClearStage-0.1.0-win-x64.zip
-5fd5280e83c8779faf89ff272b9362372481e33c1a8d3733bae2df39335b316e  ClearStage-0.1.0-linux-x64.AppImage
-b347722d5d623a1f686a65ed53be6403b6b8326b4029b4c8eda8ab58e2fc4bac  ClearStage-0.1.0-mac-arm64.zip
-07c25ec037fa2ab2b80eea0650a9bcdf61704eb8cd3e2410f706f23c89c3ec6b  ClearStage-0.1.0-mac-x64.zip
+aec65d91009c1d45281b3c86383392b29cfb3cf776086074f8edd251bf0d2acf  ClearStage-Setup-0.1.0.exe
+60ec288058a8384141e9770dbab51f0c0177569fd4dc2402531e985e7683d8ae  ClearStage-0.1.0-win-x64.zip
+86b7b3f4eec32e33b339ff7fbcce1b552f5298d5b537945c0fcd60054046956e  ClearStage-0.1.0-linux-x64.AppImage
+2cc897fb82e7f669b54bf29a55977022c0ddddcba49deb17e397d210f3a9d72b  ClearStage-0.1.0-mac-arm64.zip
+fac9b463a97c8dff451dedde85c8363e26ea95591e2c4ef342849c0380411f70  ClearStage-0.1.0-mac-x64.zip

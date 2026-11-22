@@ -84,7 +84,7 @@
         </details>
         <details class="faq-item" data-category="playback">
           <summary><span class="qnum">07</span> 为什么最高画质是灰的或只能选到较低画质？<span class="plus"></span></summary>
-          <div class="faq-answer"><p>B 站会根据账号状态、粉丝等级、直播流本身和网络条件限制画质。未登录时通常只能获取较低档位。尝试在「设置 → 账号与登录」粘贴浏览器 Cookie 登录，或确认主播本身没有提供更高画质。</p></div>
+          <div class="faq-answer"><p>B 站会根据账号状态、粉丝等级、直播流本身和网络条件限制画质。未登录时通常最高只提供超清 720P；登录后按账号权限提供蓝光/原画。播放器画质菜单显示的是实际提供的画质，点击播放器上的「码流信息」可查看分辨率、协议和缓冲。</p><p>如果选择更高画质后画面没有变化，播放器会提示「登录解锁」或「账号限制」；这不是按钮失效，而是 B 站没有返回更高档位的流。</p></div>
         </details>
         <details class="faq-item" data-category="playback">
           <summary><span class="qnum">08</span> 弹幕不显示 / 显示「受限」？<span class="plus"></span></summary>
@@ -92,7 +92,7 @@
         </details>
         <details class="faq-item" data-category="playback">
           <summary><span class="qnum">09</span> 多画面最多能开几路？会很卡吗？<span class="plus"></span></summary>
-          <div class="faq-answer"><p>最多 9 路，但建议根据硬件与网络量力而行。4 路 1080p 建议 8 GB 内存和稳定的 20 Mbps 以上带宽。每一路都独立解码，同时开太多会明显增加 GPU/CPU 占用。</p><p>如果卡顿，先关闭不看的画面，或统一降到「高清」。音频默认静音，避免多路同时出声。</p></div>
+          <div class="faq-answer"><p>最多 9 路，画面会按实际路数自动排成 16:9 网格，不会再被拉伸。5 路以上默认自动降到蓝光以控制解码和带宽；可关闭自动降载。卡顿时优先使用「专注当前」只播放选中画面，或减少同时打开的线路。</p><p>B 站播放优先使用 HTTP-FLV 连续缓冲；HLS 用于直链或没有 FLV 的源。播放器可打开码流 HUD 查看实际分辨率与缓冲。</p></div>
         </details>
 
         <details class="faq-item" data-category="account">
