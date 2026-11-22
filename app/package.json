@@ -1,0 +1,96 @@
+{
+  "name": "clearstage",
+  "version": "0.1.0",
+  "description": "澄幕 ClearStage — 纯净、多路、可录制的 PC 直播工作台",
+  "main": "./out/main/index.js",
+  "author": "ClearStage",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "postinstall": "node node_modules/electron/install.js",
+    "dev": "electron-vite dev",
+    "start": "electron-vite preview",
+    "build": "electron-vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "test": "vitest run --pool=threads",
+    "package:win": "electron-vite build && electron-builder --win --x64 --publish never",
+    "package:unpacked": "electron-vite build && electron-builder --win --x64 --dir --publish never",
+    "package:mac": "electron-vite build && electron-builder --mac --publish never",
+    "package:linux": "electron-vite build && electron-builder --linux --publish never",
+    "site": "node scripts/serve-site.mjs",
+    "site:lan": "node scripts/serve-site.mjs --lan"
+  },
+  "dependencies": {
+    "hls.js": "^1.7.4",
+    "lucide-react": "^1.77.0",
+    "mpegts.js": "^1.8.2",
+    "qrcode.react": "^4.2.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "ws": "^8.23.0",
+    "zustand": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/ws": "^8.18.1",
+    "@vitejs/plugin-react": "^6.3.0",
+    "electron": "^45.4.1",
+    "electron-builder": "^26.18.0",
+    "electron-vite": "^6.0.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  },
+  "build": {
+    "appId": "app.clearstage.desktop",
+    "productName": "澄幕",
+    "artifactName": "ClearStage-${version}-${os}-${arch}.${ext}",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "out/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "npmRebuild": false,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "澄幕 ClearStage",
+      "artifactName": "ClearStage-Setup-${version}.${ext}"
+    },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.video",
+      "icon": "build/icon.png"
+    },
+    "linux": {
+      "target": "AppImage",
+      "category": "AudioVideo",
+      "icon": "build/icon.png"
+    }
+  }
+}
