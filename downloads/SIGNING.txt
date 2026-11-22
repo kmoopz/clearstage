@@ -1,0 +1,27 @@
+ClearStage 0.1.0 — Windows code signing notes
+=============================================
+
+Certificate subject : CN=ClearStage Local Code Signing, O=ClearStage
+Certificate type    : Self-signed code-signing certificate (not a CA certificate)
+Thumbprint          : FDEDC7F1FAA58A685DB9D2BDD967E7B8B65C1D72
+Validity            : 2026-11-22 to 2029-11-22
+Public certificate  : ClearStage-CodeSigning.cer
+
+Current PC:
+- The certificate is installed in CurrentUser\Root and CurrentUser\TrustedPublisher.
+- The application EXE and installer are timestamped and report "Valid" via Authenticode.
+
+Other PCs:
+- Windows may still show an unknown-publisher or SmartScreen warning.
+- Install ClearStage-CodeSigning.cer for the current user before running:
+
+  certutil -user -addstore Root ClearStage-CodeSigning.cer
+  certutil -user -addstore TrustedPublisher ClearStage-CodeSigning.cer
+
+- Then verify with:
+
+  signtool verify /pa /v ClearStage-Setup-0.1.0.exe
+
+To obtain a publicly trusted signature, replace this certificate with a CA-issued
+code-signing certificate and sign both the application EXE and the installer.
+A self-signed certificate cannot establish public publisher reputation.

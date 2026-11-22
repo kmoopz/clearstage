@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>澄幕 ClearStage — 把直播，还给画面</title>
+  <meta name="description" content="澄幕 ClearStage 是一款本地优先的 PC 直播工作台：B 站纯净流、多路同看、弹幕互动、本地录制、时间线切片、歌曲分轨与主播数据。Windows 0.1.0 公测版现已开放下载。" />
+  <meta property="og:title" content="澄幕 ClearStage — 把直播，还给画面" />
+  <meta property="og:description" content="多路纯净画面、本地录制与切片、实时弹幕和主播数据，放在同一张桌面上。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/app-overview.webp" />
+  <meta name="theme-color" content="#060a09" />
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/site.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="澄幕 ClearStage 首页">
+        <img src="assets/logo.svg" alt="" width="34" height="34" />
+        <span class="brand-name">澄幕 <span>ClearStage</span></span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="#features">功能</a>
+        <a href="#workflow">工作流</a>
+        <a href="docs.html">文档</a><a href="download.html">下载</a>
+        <a href="faq.html">常见问题</a>
+      </nav>
+      <div class="header-actions">
+        <span class="header-version">v0.1.0 · Windows</span>
+        <a class="btn btn-primary btn-sm" href="#download">下载澄幕 <span aria-hidden="true">↓</span></a>
+        <button class="mobile-toggle" type="button" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="container hero-grid">
+        <div class="hero-copy" data-reveal>
+          <span class="eyebrow"><span class="status-dot"></span> LOCAL-FIRST LIVE WORKSPACE</span>
+          <h1>
+            <span>把直播，</span>
+            <span class="accent-line">还给画面。</span>
+          </h1>
+          <p class="lede">
+            澄幕 ClearStage 是一个把<b>直播、弹幕、录制与切片</b>放回同一张桌面的 PC 工作台。
+            多路纯净画面，本地留存，风格由你。没有推荐流，没有多余的窗口。
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#download">下载 Windows 版 <span aria-hidden="true">↓</span></a>
+            <a class="btn btn-ghost" href="docs.html">看看怎么用 <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="hero-meta">
+            <span>Windows 10 / 11 · x64</span>
+            <span>本地优先</span>
+            <span>无订阅</span>
+          </div>
+        </div>
+
+        <div class="hero-visual" data-reveal data-reveal-delay="2">
+          <figure class="hero-window">
+            <img src="assets/app-overview.webp" alt="澄幕 ClearStage 直播工作台界面：三路直播间、实时互动面板与录制状态" width="1600" height="1018" />
+            <figcaption class="window-caption">
+              <span><i></i> LIVE WORKSPACE / DEMO DATA</span>
+              <span>3 PANES · 1 RECORDING</span>
+            </figcaption>
+          </figure>
+          <div class="float-chip one"><b>03</b> 路画面同看</div>
+          <div class="float-chip two"><b>REC</b> 本地分段写入</div>
+          <div class="float-chip three"><b>9</b> 格 · 自由组合</div>
+        </div>
+      </div>
+
+      <div class="hero-ticker" aria-label="产品能力摘要">
+        <div class="ticker-track">
+          <div class="ticker-group">
+            <span><b>纯净流</b> Pure HLS / FLV</span>
+            <span><b>多画面</b> Up to 9 panes</span>
+            <span><b>弹幕</b> Danmaku / Gifts / SC</span>
+            <span><b>录制</b> Local recording</span>
+            <span><b>切片</b> Timeline clips</span>
+            <span><b>歌曲</b> Auto track capture</span>
+            <span><b>数据</b> Creator insights</span>
+            <span><b>风格</b> Themes + CSS</span>
+          </div>
+          <div class="ticker-group" aria-hidden="true">
+            <span><b>纯净流</b> Pure HLS / FLV</span>
+            <span><b>多画面</b> Up to 9 panes</span>
+            <span><b>弹幕</b> Danmaku / Gifts / SC</span>
+            <span><b>录制</b> Local recording</span>
+            <span><b>切片</b> Timeline clips</span>
+            <span><b>歌曲</b> Auto track capture</span>
+            <span><b>数据</b> Creator insights</span>
+            <span><b>风格</b> Themes + CSS</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="thesis" id="story">
+      <div class="container thesis-inner">
+        <div class="section-index" data-reveal><strong>01</strong> THE POINT</div>
+        <div>
+          <p class="thesis-statement" data-reveal>
+            不是把网页塞进播放器，<br />
+            而是为你重新安排<em>一块屏幕。</em>
+          </p>
+          <div class="thesis-side" data-reveal data-reveal-delay="1">
+            <p>
+              直播本来有很多层：画面、弹幕、礼物、回放、主播的过去与此刻。大多数时候，它们被拆散在标签页、客户端和本地文件夹里。
+              澄幕把它们收拢到桌面，但不打扰你正在看的东西。
+            </p>
+            <span class="signature">直播很长，<br />桌面应该安静一点。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section features" id="features">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div>
+            <span class="eyebrow">ONE DESK, EVERY CONTEXT</span>
+            <h2>一块屏幕，<br /><em>容纳一场直播的全部上下文。</em></h2>
+          </div>
+          <p>从画面接入到事后回看，每一个功能都围绕「少切一次窗口」设计。可以只用其中一项，也可以把整条工作流留在澄幕里。</p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card span-7 big" data-reveal>
+            <div class="feature-meta"><span class="feature-index">01 / PLAY</span><span class="feature-tag">BILIBILI NATIVE</span></div>
+            <h3>纯净流，不打扰。</h3>
+            <p>直接解析 HLS / FLV，去掉网页外壳、推荐流与无关模块。只留下画面、弹幕和你选择的控制层；画质与音量按每一路独立设置。</p>
+            <div class="feature-visual">
+              <div class="mini-player">
+                <div class="mini-player-bg"></div>
+                <div class="mini-player-content">
+                  <div class="mini-player-top">
+                    <span class="live-label"><i></i> LIVE</span>
+                    <span class="mini-player-signal">PURE SIGNAL / 1080P</span>
+                  </div>
+                  <div class="mini-player-copy">
+                    <span>GRAND FINAL · 2026</span>
+                    <h4>最后一局<em>LAST GAME</em></h4>
+                  </div>
+                  <div class="mini-player-controls">
+                    <span>◉</span><span>▮▮</span><span>─────</span><span class="spacer"></span><span>弹幕在线</span><span class="quality">原画</span><span>● 录制</span>
+                  </div>
+                </div>
+                <div class="mini-float"><span>海盐芝士 开通了舰长</span><span>白桃乌龙：这波预判太准了</span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="feature-card span-5 big" data-reveal data-reveal-delay="1">
+            <div class="feature-meta"><span class="feature-index">02 / MULTI</span><span class="feature-tag">UP TO 9 PANES</span></div>
+            <h3>把现场并排放在一起。</h3>
+            <p>1 / 2 / 4 / 6 / 9 格布局。主舞台、二路解说和另一个视角，不必来回切换。</p>
+            <div class="feature-visual">
+              <div class="mini-grid">
+                <div class="mini-pane"><span class="pane-live"></span><span class="pane-art"></span><span class="pane-label">主舞台</span></div>
+                <div class="mini-pane"><span class="pane-live"></span><span class="pane-art"></span><span class="pane-label">二路解说</span></div>
+                <div class="mini-pane"><span class="pane-live"></span><span class="pane-art"></span><span class="pane-label">选手视角</span></div>
+                <div class="mini-pane"><span>＋ 添加画面</span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="feature-card span-5" data-reveal>
+            <div class="feature-meta"><span class="feature-index">03 / RECORD</span><span class="feature-tag">LOCAL SEGMENTS</span></div>
+            <h3>录制，从本地开始。</h3>
+            <p>HLS 分段写入磁盘，停止后自动合并；意外退出也保留已下载分段。拖动时间线，随时切出想留下的部分。</p>
+            <div class="feature-visual">
+              <div class="mini-timeline">
+                <div class="timeline-scale"><span>00:00</span><span>14:20</span><span>28:41</span></div>
+                <div class="timeline-bar">
+                  <div class="waveform">
+                    <i style="height:28%"></i><i style="height:54%"></i><i style="height:38%"></i><i style="height:72%"></i><i style="height:45%"></i><i style="height:88%"></i><i style="height:35%"></i><i style="height:61%"></i><i style="height:42%"></i><i style="height:78%"></i><i style="height:31%"></i><i style="height:56%"></i><i style="height:70%"></i><i style="height:39%"></i><i style="height:64%"></i><i style="height:48%"></i><i style="height:84%"></i><i style="height:52%"></i><i style="height:29%"></i><i style="height:67%"></i><i style="height:46%"></i><i style="height:75%"></i><i style="height:34%"></i><i style="height:59%"></i>
+                  </div>
+                  <div class="timeline-selection"></div>
+                </div>
+                <div class="timeline-caption"><span>精确切片 <b>01:12 — 02:18</b></span><span>MP4 · 96 MB</span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="feature-card span-7" data-reveal data-reveal-delay="1">
+            <div class="feature-meta"><span class="feature-index">04 / INTERACT</span><span class="feature-tag">DANMAKU / GIFTS / SC</span></div>
+            <h3>互动汇成一条流。</h3>
+            <p>弹幕、礼物、舰长与醒目留言收进同一个可筛选面板。发送历史、常用语与限速连发都在输入框旁边，不用再复制粘贴。</p>
+            <div class="feature-visual">
+              <div class="mini-chat">
+                <div class="chat-line"><span class="avatar">夜</span><span><span class="name">夜行列车</span> 这波团战开得太漂亮了</span></div>
+                <div class="chat-line"><span class="avatar">七</span><span><span class="name">七号观众</span> <span class="gift">送出 打call ×6</span></span></div>
+                <div class="chat-line super"><span class="avatar">A</span><span><span class="name">Aki</span> 第一次用澄幕看比赛，四路同开太爽了！</span></div>
+                <div class="chat-line"><span class="avatar">纸</span><span><span class="name">纸飞机</span> 请问这个多画面最多能开几路？</span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="feature-card span-4" data-reveal>
+            <div class="feature-meta"><span class="feature-index">05 / THEME</span><span class="feature-tag">CSS READY</span></div>
+            <h3>界面，也是观看方式。</h3>
+            <p>四套主题、强调色、弹幕字号与不透明度。高级用户可以写一段 CSS，把自己的工作台调成唯一的样子。</p>
+            <div class="feature-visual">
+              <div class="mini-themes">
+                <div class="theme-swatch dark"><strong>夜幕</strong><span>墨黑与薄荷</span></div>
+                <div class="theme-swatch light"><strong>晨雾</strong><span>纸与青瓷</span></div>
+                <div class="theme-swatch blue"><strong>潮汐</strong><span>深海蓝</span></div>
+                <div class="theme-swatch film"><strong>胶片</strong><span>暖褐放映室</span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="feature-card span-4" data-reveal data-reveal-delay="1">
+            <div class="feature-meta"><span class="feature-index">06 / MUSIC</span><span class="feature-tag">AUTO TRACKS</span></div>
+            <h3>把直播里的歌，单独留下。</h3>
+            <p>开启 AudD 或 ACRCloud 后，每 30 秒识别当前歌曲；切歌时自动保存独立音频，也可以从录制时间线手动标记。</p>
+            <div class="feature-visual">
+              <div class="mini-songs">
+                <div class="song-line"><span class="cover">♪</span><span><b>深蓝</b><span>陈婧霏</span></span><em>04:12</em></div>
+                <div class="song-line"><span class="cover">♪</span><span><b>晚风</b><span>陈婧霏</span></span><em>03:46</em></div>
+                <div class="song-line"><span class="cover">♪</span><span><b>一生中最爱</b><span>陈奕迅</span></span><em>04:38</em></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="feature-card span-4" data-reveal data-reveal-delay="2">
+            <div class="feature-meta"><span class="feature-index">07 / INSIGHT</span><span class="feature-tag">LOCAL STATS</span></div>
+            <h3>看懂直播之后发生的事。</h3>
+            <p>粉丝变化、人气曲线、公开礼物与弹幕密度。只记录你使用澄幕期间产生的数据；没有账号数据上传。</p>
+            <div class="feature-visual">
+              <div class="mini-chart">
+                <div class="chart-toolbar"><span>VIEWER TREND</span><span>7D</span></div>
+                <div class="chart-svg">
+                  <svg viewBox="0 0 320 100" preserveAspectRatio="none" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="mini-area" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#7ef0c2" stop-opacity=".24" />
+                        <stop offset="100%" stop-color="#7ef0c2" stop-opacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M0 78 C30 76 40 60 62 63 S95 51 112 54 S142 36 165 43 S200 29 218 34 S252 20 274 25 S299 14 320 18 L320 100 L0 100Z" fill="url(#mini-area)" />
+                    <path d="M0 78 C30 76 40 60 62 63 S95 51 112 54 S142 36 165 43 S200 29 218 34 S252 20 274 25 S299 14 320 18" fill="none" stroke="#7ef0c2" stroke-width="1.8" />
+                  </svg>
+                </div>
+                <div class="chart-stat"><div><b>12.8万</b><span>当前人气</span></div><div><b>+6,132</b><span>近 7 天涨粉</span></div><div><b>¥866</b><span>今日礼物估算</span></div></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="feature-card span-6" data-reveal>
+            <div class="feature-meta"><span class="feature-index">08 / FEED</span><span class="feature-tag">BILIBILI SPACE</span></div>
+            <h3>画面之外，读完主播最近说了什么。</h3>
+            <p>公开动态、图文与近期投稿在同一个信息流里。不跳转网页，不丢掉刚刚看到的上下文。</p>
+            <div class="feature-visual">
+              <div class="mini-feed">
+                <div class="feed-mini-card"><div class="thumb"></div><strong>凌晨三点的直播间，藏着城市里最温柔的声音</strong><span>2 小时前 · 视频</span></div>
+                <div class="feed-mini-card"><div class="thumb"></div><strong>今晚的直播间布置</strong><span>1 天前 · 图片动态</span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="feature-card span-6" data-reveal data-reveal-delay="1">
+            <div class="feature-meta"><span class="feature-index">09 / MEMORY</span><span class="feature-tag">WITH BOUNDARIES</span></div>
+            <h3>想说的话，不必每次重打。</h3>
+            <p>自动记住发送过的弹幕，收藏常用语。连发有次数与最小间隔限制，让重复成为一次有边界的操作，而不是失控的刷屏。</p>
+            <div class="feature-visual">
+              <div class="mini-repeater">
+                <div class="repeat-bubble">这一波太漂亮了！</div>
+                <div class="repeat-bubble">常用：打卡打卡，今天也在。</div>
+                <div class="repeat-bubble">连发 5 次 · 间隔 4 秒</div>
+                <div class="repeat-status"><span>已发送 3 / 5</span><i><b></b></i><span>可随时停止</span></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section workflow-section" id="workflow">
+      <div class="container">
+        <div class="workflow">
+          <div class="workflow-copy" data-reveal>
+            <span class="eyebrow">THE WORKFLOW</span>
+            <h2>从进入直播间，<br />到留下一个<em>片段。</em></h2>
+            <p>不需要先学一套复杂的直播工具。澄幕只把必要的动作放在手边，其他都留在背景里。</p>
+            <div class="workflow-steps">
+              <div class="workflow-step"><span>01</span><div><h4>接入一路画面</h4><p>粘贴 B 站直播间链接或房间号；也可以接入你有权访问的通用 HLS / FLV 直链。画面进入直播台，B 站弹幕同时开始工作。</p></div></div>
+              <div class="workflow-step"><span>02</span><div><h4>看着，或让它录着</h4><p>点一下录制，HLS 分段就会写入你选择的目录。离开直播台也不会中断；停止后自动进入录制库。</p></div></div>
+              <div class="workflow-step"><span>03</span><div><h4>在时间线上留下想要的</h4><p>拖动起止点导出切片；开启歌曲捕获后，切歌会自动保存成独立音频。所有文件都在本地。</p></div></div>
+            </div>
+          </div>
+          <div class="workflow-shot" data-reveal data-reveal-delay="2">
+            <img src="assets/app-recordings.webp" alt="澄幕录制库界面：录制列表、时间线与关联切片" width="1600" height="1018" loading="lazy" />
+            <div class="quote-card"><span>LOCAL ARCHIVE</span><p>没有云端上传，也没有二次压缩。你录下的，就是你看到的。</p></div>
+          </div>
+        </div>
+
+        <div class="datastory">
+          <div class="datastory-copy" data-reveal>
+            <span class="eyebrow">AFTER THE STREAM</span>
+            <h2>直播结束，<br /><em>数据还留在这里。</em></h2>
+            <p>澄幕会在你观看期间记录粉丝、在线人气与公开礼物事件，形成一条只属于你的本地时间线。它不替代平台后台，但足够回答「这一场到底发生了什么」。</p>
+            <div class="data-points">
+              <div class="data-point"><b>60s</b><span>数据快照采样间隔</span></div>
+              <div class="data-point"><b>100%</b><span>保存在本机</span></div>
+              <div class="data-point"><b>7 / 14 / 30D</b><span>趋势视图</span></div>
+              <div class="data-point"><b>0</b><span>云端账号</span></div>
+            </div>
+          </div>
+          <div class="datastory-shot" data-reveal data-reveal-delay="2">
+            <img src="assets/app-stats.webp" alt="澄幕主播数据舱：粉丝、人气曲线与礼物构成" width="1600" height="1018" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="privacy">
+      <div class="container">
+        <div class="privacy-inner" data-reveal>
+          <div>
+            <span class="eyebrow">LOCAL FIRST, BY DEFAULT</span>
+            <h2>你的直播，<br />不必经过我们的服务器。</h2>
+            <p>播放流由本机媒体代理转发，录制、切片、歌曲与数据都写入本地目录。澄幕没有云端账号体系，也不含遥测和广告。你唯一需要联网的时刻，是平台接口本身。</p>
+          </div>
+          <div class="privacy-list">
+            <span>NO CLOUD UPLOAD</span>
+            <span>NO TELEMETRY</span>
+            <span>NO ADS</span>
+            <span>LOCAL COOKIES</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="download-section" id="download">
+      <div class="container">
+        <div class="download-panel" data-reveal>
+          <div class="download-grid">
+            <div class="download-copy">
+              <span class="eyebrow">PUBLIC BETA · v0.1.0</span>
+              <h2>把澄幕，<br />带回你的桌面。</h2>
+              <p>Windows 10 / 11 首发。免费公测，本地功能不设订阅。运行安装程序，或解压便携包，从 B 站直播间开始。</p>
+              <div class="download-actions">
+                <a class="btn btn-primary" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-Setup-0.1.0.exe" download>下载 Windows 安装包 <span aria-hidden="true">↓</span></a>
+                <a class="btn btn-ghost" href="docs.html#install">安装与证书说明 <span aria-hidden="true">↗</span></a>
+              </div>
+              <div class="download-meta">
+                <span>Windows x64</span>
+                <span>安装包约 108 MB</span>
+                <span>本地代码签名</span>
+                <span>数据留在本机</span>
+              </div>
+            </div>
+            <div class="download-artifacts">
+              <div class="artifact-head"><span>RELEASE CHANNEL</span><span>0.1.0 / BETA</span></div>
+              <div class="artifact-row">
+                <div class="artifact-icon">⊞</div>
+                <div class="artifact-main"><b>Windows 安装程序</b><span>ClearStage-Setup-0.1.0.exe · 推荐</span></div>
+                <a class="artifact-link" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-Setup-0.1.0.exe" download>下载 ↓</a>
+              </div>
+              <div class="artifact-row">
+                <div class="artifact-icon">◫</div>
+                <div class="artifact-main"><b>Windows 便携包</b><span>ClearStage-0.1.0-win-x64.zip · 约 152 MB</span></div>
+                <a class="artifact-link" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-0.1.0-win-x64.zip" download>下载 ↓</a>
+              </div>
+              <div class="artifact-row">
+                <div class="artifact-icon">⌘</div>
+                <div class="artifact-main"><b>签名证书</b><span>ClearStage-CodeSigning.cer · 自签名说明</span></div>
+                <a class="artifact-link" href="downloads/ClearStage-CodeSigning.cer" download>下载证书 ↓</a>
+              </div>
+              <div class="checksum">
+                <code id="release-sha">0837a00a83fc78f43c41ddac927c714718ca352ae69be196cf3c231396d3f16d</code>
+                <button type="button" data-copy="0837a00a83fc78f43c41ddac927c714718ca352ae69be196cf3c231396d3f16d" id="copy-sha">复制</button>
+              </div>
+              <p class="download-note">安装包使用 ClearStage 本地自签名证书，本机已安装信任；其他电脑若提示未知发布者，可安装上方证书。公测版尚无 CA 证书；SHA-256 可在 <a href="download.html">下载页</a> 核对。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section faq-preview" id="faq">
+      <div class="container">
+        <div class="faq-grid">
+          <div class="faq-copy" data-reveal>
+            <span class="eyebrow">BEFORE YOU ASK</span>
+            <h2>一些容易<br /><em>先遇到的问题。</em></h2>
+            <p>安装、直播流、登录、录制、切片、歌曲识别与数据边界。完整的 21 个问题在 FAQ 页面。</p>
+            <a class="btn btn-ghost btn-sm" href="faq.html">查看全部常见问题 <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="faq-list" data-reveal data-reveal-delay="1">
+            <details class="faq-item" open>
+              <summary><span class="qnum">01</span> 澄幕需要登录吗？不登录能看吗？<span class="plus"></span></summary>
+              <div class="faq-answer"><p>观看公开画面和录制不需要登录。使用更高画质、发送弹幕、访问更完整的动态与数据时，需要扫码登录你自己的 B 站账号。登录 Cookie 仅保存在本机。</p></div>
+            </details>
+            <details class="faq-item">
+              <summary><span class="qnum">02</span> 通用直播直链支持哪些能力？<span class="plus"></span></summary>
+              <div class="faq-answer"><p>通用 HLS / FLV 直链支持播放、多画面与本地录制、时间线切片。由于直链没有平台账号上下文，无法提供实时弹幕、礼物、主播资料、动态或主播数据。</p></div>
+            </details>
+            <details class="faq-item">
+              <summary><span class="qnum">03</span> 没有安装 FFmpeg 会影响什么？<span class="plus"></span></summary>
+              <div class="faq-answer"><p>基础录制与「按分段对齐」的切片仍然可用。精确到帧的切片、自动合并 MP4、歌曲音频导出需要 FFmpeg。安装后在「设置 → 录制与存储」中检测即可。</p></div>
+            </details>
+            <details class="faq-item">
+              <summary><span class="qnum">04</span> Windows 提示「未知发布者」怎么办？<span class="plus"></span></summary>              <div class="faq-answer"><p>0.1.0 使用 ClearStage 本地自签名证书。当前电脑已安装信任，可直接运行安装包；其他电脑若提示未知发布者，请安装下载页的 ClearStage-CodeSigning.cer 到「受信任的根证书颁发机构」与「受信任的发布者」。请勿在压缩包内直接双击 EXE，也不要把程序解压到受限项目目录。</p></div>
+            </details>
+            <details class="faq-item">
+              <summary><span class="qnum">05</span> 录制文件在哪里？会占很多空间吗？<span class="plus"></span></summary>
+              <div class="faq-answer"><p>默认在系统「视频/ClearStage」目录，可在设置中更改。录制按 HLS 分段写入，画质越高占用越大；录制库会显示每段的大小与总占用。删除录制会同时删除关联切片与歌曲文件。</p></div>
+            </details>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing">
+      <div class="container">
+        <div class="closing-inner" data-reveal>
+          <h2>直播很长，<br />桌面应该安静一点。</h2>
+          <p>澄幕 ClearStage · Windows 0.1.0 Public Beta</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-Setup-0.1.0.exe" download>下载 Windows 安装包 <span aria-hidden="true">↓</span></a>
+            <a class="btn btn-ghost" href="docs.html">阅读文档 <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="index.html">
+            <img src="assets/logo.svg" alt="" width="34" height="34" />
+            <span class="brand-name">澄幕 <span>ClearStage</span></span>
+          </a>
+          <p>本地优先的 PC 直播工作台。把画面、弹幕、录制与数据放回同一张桌子。</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#features">功能</a>
+          <a href="#download">下载</a>
+          <a href="docs.html">使用文档</a>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <a href="faq.html">常见问题</a>
+          <a href="docs.html#troubleshooting">故障排查</a>
+          <a href="docs.html#privacy">数据与隐私</a>
+        </div>
+        <div class="footer-col">
+          <h4>Notes</h4>
+          <a href="docs.html#direct">通用直链</a>
+          <a href="docs.html#install">系统要求</a>
+          <a href="https://live.bilibili.com/" target="_blank" rel="noopener noreferrer">哔哩哔哩直播 ↗</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© <span data-year>2026</span> ClearStage. 澄幕是第三方本地工具，与哔哩哔哩无隶属关系。请仅观看、录制你有权访问的内容，遵守平台服务条款与主播授权，不得用于商业盗播或再分发。礼物与打赏不代理。</p>
+        <div class="footer-legal">Sora / Noto Serif SC · SIL OFL<br />Built for the desktop.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/site.js" defer></script>
+</body>
+</html>

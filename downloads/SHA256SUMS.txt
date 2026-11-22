@@ -1,0 +1,3 @@
+# ClearStage 0.1.0 Windows release
+0837a00a83fc78f43c41ddac927c714718ca352ae69be196cf3c231396d3f16d  ClearStage-Setup-0.1.0.exe
+ca034fe59fc620e6ab67f0e4801c92234d7f61a99fa94b1c195ff674b566c03a  ClearStage-0.1.0-win-x64.zip

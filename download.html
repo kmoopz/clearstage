@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>下载 — 澄幕 ClearStage</title>
+  <meta name="description" content="下载澄幕 ClearStage 0.1.0 Windows 公测版便携包。Windows 10 / 11 x64，含 SHA-256 校验、系统要求与使用说明。" />
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/site.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="澄幕 ClearStage 首页">
+        <img src="assets/logo.svg" alt="" width="34" height="34" />
+        <span class="brand-name">澄幕 <span>ClearStage</span></span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="index.html#features">功能</a>
+        <a href="index.html#workflow">工作流</a>
+        <a href="docs.html">文档</a><a href="download.html">下载</a>
+        <a href="faq.html">常见问题</a>
+      </nav>
+      <div class="header-actions">
+        <span class="header-version">RELEASE · 0.1.0</span>
+        <a class="btn btn-primary btn-sm" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-Setup-0.1.0.exe" download>下载安装包 <span aria-hidden="true">↓</span></a>
+        <button class="mobile-toggle" type="button" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="subpage">
+    <section class="subhero">
+      <div class="container">
+        <span class="eyebrow">DOWNLOAD · WINDOWS X64</span>
+        <h1>带一块屏幕回去，<br /><em>把直播放到桌上。</em></h1>
+        <p>0.1.0 为公开测试版，免费、无需注册。推荐使用安装程序；也可以下载便携包。录制与数据都留在你自己的电脑里。</p>
+        <div class="subhero-meta"><span>Windows 10 / 11 x64</span><span>Public Beta</span><span>本地代码签名</span></div>
+      </div>
+    </section>
+
+    <div class="container download-page">
+      <div class="download-page-grid">
+        <div>
+          <div class="version-head"><span class="badge">LATEST</span><span>v0.1.0 · 2026-11-22</span></div>
+
+          <div class="release-card">
+            <div class="release-title">
+              <div class="release-icon">⊞</div>
+              <div><h3>Windows 安装程序</h3><span>ClearStage-Setup-0.1.0.exe · 108 MB</span></div>
+            </div>
+            <p class="muted" style="margin-top:13px;font-size:11px;line-height:1.8">推荐下载。安装到当前用户目录，自动创建桌面与开始菜单快捷方式，不需要管理员权限。安装包与主程序都使用 ClearStage 本地签名证书签名；当前电脑已安装信任。</p>
+            <div class="release-actions">
+              <a class="btn btn-primary" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-Setup-0.1.0.exe" download>下载安装包 <span aria-hidden="true">↓</span></a>
+              <a class="btn btn-ghost" href="docs.html#install">安装与证书说明</a>
+            </div>
+            <div class="release-list"><span>签名安装包</span><span>当前用户安装</span><span>桌面快捷方式</span><span>标准卸载</span></div>
+          </div>
+
+          <div class="release-card">
+            <div class="release-title">
+              <div class="release-icon">◫</div>
+              <div><h3>Windows 便携包</h3><span>ClearStage-0.1.0-win-x64.zip · 152 MB</span></div>
+            </div>
+            <p class="muted" style="margin-top:13px;font-size:11px;line-height:1.8">解压到普通用户目录后运行 <code style="color:var(--paper-soft)">ClearStage.exe</code>。适合放在移动硬盘或受管环境；不要只把 EXE 从压缩包里拖出来单独运行，也不要解压到受限的项目目录。</p>
+            <div class="release-actions">
+              <a class="btn btn-ghost" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-0.1.0-win-x64.zip" download>下载便携包 <span aria-hidden="true">↓</span></a>
+              <a class="btn btn-ghost" href="downloads/ClearStage-CodeSigning.cer" download>下载签名证书</a>
+            </div>
+            <div class="release-list"><span>免安装</span><span>解压即用</span><span>x64</span><span>包含已签名 EXE</span></div>
+          </div>
+
+          <div class="release-card">
+            <div class="release-title"><div class="release-icon">⌘</div><div><h3>macOS / Linux</h3><span>Build from source</span></div></div>
+            <p class="muted" style="margin-top:13px;font-size:11px;line-height:1.8">当前未提供已签名安装包。源码中包含 macOS DMG 与 Linux AppImage 的 electron-builder 配置；需要对应平台环境、Node.js 22+ 与 npm 自行构建。</p>
+            <div class="release-actions"><a class="btn btn-ghost" href="docs.html#build">查看构建说明 <span aria-hidden="true">↗</span></a></div>
+          </div>
+
+          <h3 style="margin-top:35px;font-size:15px;font-weight:500">0.1.0 更新内容</h3>
+          <ul class="release-notes">
+            <li>B 站纯净流播放、实时弹幕、礼物 / 舰长 / 醒目留言。</li>
+            <li>最多 9 路多画面、独立画质与录制控制。</li>
+            <li>本地 HLS 录制、时间线切片、录制库与关联文件管理。</li>
+            <li>主题工坊、自定义 CSS、弹幕层参数。</li>
+            <li>B 站扫码登录、弹幕发送、历史与常用语、限速连发。</li>
+            <li>主播数据本地快照、公开动态与近期视频。</li>
+            <li>AudD / ACRCloud 歌曲识别与手动标记。</li>
+            <li>通用 HLS / FLV 直链模式（播放、多画面与录制）。</li>
+          </ul>
+        </div>
+
+        <aside class="release-side">
+          <h3>系统要求</h3>
+          <table class="requirement-table">
+            <tr><td>操作系统</td><td>Windows 10 1903+ / 11</td></tr>
+            <tr><td>架构</td><td>x64</td></tr>
+            <tr><td>内存</td><td>4 GB 起，8 GB 推荐</td></tr>
+            <tr><td>磁盘</td><td>1 GB 应用 + 录制空间</td></tr>
+            <tr><td>网络</td><td>稳定宽带，建议 20 Mbps+</td></tr>
+            <tr><td>可选</td><td>FFmpeg 5+</td></tr>
+          </table>
+
+          <div class="checksum-box">
+            <label>INSTALLER SHA-256</label>
+            <div class="checksum"><code id="sha-installer">0837a00a83fc78f43c41ddac927c714718ca352ae69be196cf3c231396d3f16d</code><button type="button" data-copy="0837a00a83fc78f43c41ddac927c714718ca352ae69be196cf3c231396d3f16d" id="copy-installer">复制</button></div>
+            <label style="margin-top:11px">PORTABLE ZIP SHA-256</label>
+            <div class="checksum"><code id="sha-zip">ca034fe59fc620e6ab67f0e4801c92234d7f61a99fa94b1c195ff674b566c03a</code><button type="button" data-copy="ca034fe59fc620e6ab67f0e4801c92234d7f61a99fa94b1c195ff674b566c03a" id="copy-zip">复制</button></div>
+          </div>
+
+          <div class="callout warn" style="margin-top:18px">0.1.0 使用 <b>ClearStage 本地自签名证书</b>，当前电脑已安装信任。其他电脑如果仍提示未知发布者，可下载 <a href="downloads/ClearStage-CodeSigning.cer" style="color:var(--amber)">ClearStage-CodeSigning.cer</a>，安装到「受信任的根证书颁发机构」与「受信任的发布者」。<a href="downloads/SIGNING.txt" style="color:var(--amber)">签名与校验说明</a>。请勿在压缩包内直接双击 EXE，也不要从受限项目目录运行。</div>
+
+          <h3 style="margin-top:28px">安装或解压之后</h3>
+          <ul class="release-notes">
+            <li>公开 B 站画面可直接观看；更高画质、弹幕与更完整动态需登录自己的 B 站账号。</li>
+            <li>通用直链仅支持播放与录制，不解析弹幕或主播数据。</li>
+            <li>设置录制目录；需要精确切片时安装 FFmpeg。</li>
+            <li>礼物与打赏不代理；请在官方直播间完成。</li>
+          </ul>
+          <a class="btn btn-ghost btn-sm" style="margin-top:12px" href="docs.html#quick-start">快速开始 <span aria-hidden="true">↗</span></a>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand"><a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="34" height="34" /><span class="brand-name">澄幕 <span>ClearStage</span></span></a><p>本地优先的 PC 直播工作台。把画面、弹幕、录制与数据放回同一张桌子。</p></div>
+        <div class="footer-col"><h4>Product</h4><a href="index.html#features">功能</a><a href="download.html">下载</a><a href="docs.html">使用文档</a></div>
+        <div class="footer-col"><h4>Support</h4><a href="faq.html">常见问题</a><a href="docs.html#troubleshooting">故障排查</a><a href="docs.html#privacy">数据与隐私</a></div>
+        <div class="footer-col"><h4>Notes</h4><a href="docs.html#direct">通用直链</a><a href="docs.html#install">系统要求</a><a href="https://live.bilibili.com/" target="_blank" rel="noopener noreferrer">哔哩哔哩直播 ↗</a></div>
+      </div>
+      <div class="footer-bottom">
+        <p>© <span data-year>2026</span> ClearStage. 澄幕是第三方本地工具，与哔哩哔哩无隶属关系。请仅观看、录制你有权访问的内容，遵守平台服务条款与主播授权，不得用于商业盗播或再分发。</p>
+        <div class="footer-legal">Sora / Noto Serif SC · SIL OFL<br />Built for the desktop.</div>
+      </div>
+    </div>
+  </footer>
+  <script src="assets/site.js" defer></script>
+</body>
+</html>

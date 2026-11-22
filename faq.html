@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>常见问题 — 澄幕 ClearStage</title>
+  <meta name="description" content="澄幕 ClearStage 常见问题：安装、启动、B 站直播流、扫码登录、弹幕、录制、切片、歌曲识别、主播数据与通用直链模式。" />
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/site.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="澄幕 ClearStage 首页">
+        <img src="assets/logo.svg" alt="" width="34" height="34" />
+        <span class="brand-name">澄幕 <span>ClearStage</span></span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="index.html#features">功能</a>
+        <a href="index.html#workflow">工作流</a>
+        <a href="docs.html">文档</a><a href="download.html">下载</a>
+        <a href="faq.html">常见问题</a>
+      </nav>
+      <div class="header-actions">
+        <span class="header-version">FAQ · v0.1.0</span>
+        <a class="btn btn-primary btn-sm" href="index.html#download">下载澄幕 <span aria-hidden="true">↓</span></a>
+        <button class="mobile-toggle" type="button" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="subpage">
+    <section class="subhero">
+      <div class="container">
+        <span class="eyebrow">FREQUENTLY ASKED</span>
+        <h1>先问清楚，<br /><em>再开始看。</em></h1>
+        <p>关于安装、播放、登录、录制、切片、歌曲识别与接入边界。找不到答案时，使用文档里通常有更完整的步骤。</p>
+        <div class="subhero-meta"><span>21 个问题</span><span>适用于 0.1.0</span><span>更新于 2026-11-22</span></div>
+      </div>
+    </section>
+
+    <div class="container faq-page-layout">
+      <div class="faq-search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+        <input class="faq-search" type="search" placeholder="搜索问题，例如：FFmpeg、黑屏、扫码、录制…" aria-label="搜索常见问题" />
+      </div>
+
+      <div class="faq-categories" aria-label="问题分类">
+        <button class="is-active" data-category="all">全部</button>
+        <button data-category="install">安装 / 启动</button>
+        <button data-category="playback">播放 / 弹幕</button>
+        <button data-category="account">账号</button>
+        <button data-category="recording">录制 / 切片</button>
+        <button data-category="music">歌曲</button>
+        <button data-category="data">数据 / 隐私</button>
+        <button data-category="platform">合规</button>
+      </div>
+
+      <div class="faq-page-list">
+        <details class="faq-item" data-category="install" open>
+          <summary><span class="qnum">01</span> 澄幕支持哪些系统？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>0.1.0 公开提供 <b>Windows 10 / 11 x64</b> 便携包。macOS 与 Linux 已有构建配置，但尚未提供签名安装包，需从源码构建。当前不提供移动端或网页版。</p></div>
+        </details>
+        <details class="faq-item" data-category="install" id="faq-security">
+          <summary><span class="qnum">02</span> Windows 提示未知发布者 / 点击“仍要运行”没反应怎么办？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>0.1.0 使用 ClearStage 本地自签名证书。当前电脑已安装信任，可直接运行安装包；其他电脑请先下载并安装 <a href="downloads/ClearStage-CodeSigning.cer" style="color:var(--mint)">ClearStage-CodeSigning.cer</a> 到「受信任的根证书颁发机构」和「受信任的发布者」。</p><p>如果点击“仍要运行”后没有反应，通常是因为在压缩包里直接双击 EXE，或解压到了权限受限的目录。请改用安装程序，或把整个 zip 解压到桌面等普通目录再运行。</p></div>
+        </details>
+        <details class="faq-item" data-category="install">
+          <summary><span class="qnum">03</span> 启动后白屏或窗口一闪而过？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>先确认系统为 Windows 10 1903 或更高版本，并安装了最新显卡驱动。若仍然白屏，尝试删除应用数据目录下的 <code>Cache</code> 与 <code>GPUCache</code> 后重启。</p><p>在无 GPU 的远程桌面或虚拟机上，可以用 <code>--disable-gpu</code> 参数启动。若问题持续，请附上系统版本、应用版本与问题发生时间反馈。</p></div>
+        </details>
+        <details class="faq-item" data-category="install">
+          <summary><span class="qnum">04</span> 第一次运行需要配置什么？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>什么都不配置也能观看和录制 B 站直播。建议首次使用时检查「设置 → 录制与存储」中的录制目录。想要精确切片、MP4 合并与歌曲导出，再安装 FFmpeg。</p></div>
+        </details>
+
+        <details class="faq-item" data-category="playback">
+          <summary><span class="qnum">05</span> 添加 B 站直播间失败怎么办？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>确认输入的是直播间链接或房间号，例如 <code>https://live.bilibili.com/6</code> 或 <code>6</code>。主播未开播、房间被封禁、网络无法访问 B 站接口都会导致失败。</p><p>如果提示风控或 <code>-352</code>，先在「设置」扫码登录，并在浏览器打开一次该直播间，再返回重试。</p></div>
+        </details>
+        <details class="faq-item" data-category="playback">
+          <summary><span class="qnum">06</span> 画面黑屏或一直显示「正在接入纯净流」？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>检查主播是否真的在直播，而不是轮播、回放或已下播。点播放器右上角的刷新按钮，让澄幕重新解析媒体流地址。若某个画质不可用，切换到「高清」或「超清」试试。</p><p>B 站直播流地址有有效期，长时间挂机后可能过期；刷新后会重新获取。仍失败时，先在浏览器打开直播间确认平台端播放正常。</p></div>
+        </details>
+        <details class="faq-item" data-category="playback">
+          <summary><span class="qnum">07</span> 为什么最高画质是灰的或只能选到较低画质？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>B 站会根据账号状态、粉丝等级、直播流本身和网络条件限制画质。未登录时通常只能获取较低档位。尝试在「设置 → 账号与登录」扫码登录，或确认主播本身没有提供更高画质。</p></div>
+        </details>
+        <details class="faq-item" data-category="playback">
+          <summary><span class="qnum">08</span> 弹幕不显示 / 显示「受限」？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>先确认主播正在直播且没有关闭弹幕。澄幕需要连接 B 站弹幕 WebSocket；公司网络、校园网或代理可能阻断 <code>wss://*.chat.bilibili.com</code>。</p><p>弹幕服务器鉴权依赖 WBI 签名。遇到平台风控时，稍等几分钟或扫码登录后再试。画面正常但弹幕为空，通常是连接问题，不是播放问题。</p></div>
+        </details>
+        <details class="faq-item" data-category="playback">
+          <summary><span class="qnum">09</span> 多画面最多能开几路？会很卡吗？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>最多 9 路，但建议根据硬件与网络量力而行。4 路 1080p 建议 8 GB 内存和稳定的 20 Mbps 以上带宽。每一路都独立解码，同时开太多会明显增加 GPU/CPU 占用。</p><p>如果卡顿，先关闭不看的画面，或统一降到「高清」。音频默认静音，避免多路同时出声。</p></div>
+        </details>
+
+        <details class="faq-item" data-category="account">
+          <summary><span class="qnum">10</span> 不登录能看直播和录制吗？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>公开的 B 站直播画面、多画面、录制、切片和本地数据都不需要登录。需要进一步访问账号权限内容时（更高画质、发送弹幕、更完整的动态），请扫码登录你自己的 B 站账号。</p><p>如果扫码后没有反应，可以在扫码窗口点「扫码失败？粘贴浏览器 Cookie」，从浏览器复制 SESSDATA 和 bili_jct 登录；凭证只在本机验证和加密保存。</p></div>
+        </details>
+        <details class="faq-item" data-category="account">
+          <summary><span class="qnum">11</span> 扫码登录失败或二维码过期？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>二维码有效期约三分钟。过期后点「重新生成」，用哔哩哔哩手机客户端扫码，并在手机上点确认。只扫码不确认不会完成登录。</p><p>如果手机端显示登录成功但澄幕未刷新，关闭弹窗重新打开，或在设置页点一次账号状态刷新。登录 Cookie 使用系统安全存储加密，仅保存在本机。</p></div>
+        </details>
+        <details class="faq-item" data-category="account">
+          <summary><span class="qnum">12</span> 发送弹幕失败怎么办？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>检查是否已登录、弹幕是否超过 20 个字符、直播间是否开启弹幕或设置了等级/粉丝勋章门槛。平台也可能对发送频率做限制，连续发送时请提高间隔。</p><p>若提示登录过期，重新扫码登录。连发有 3–15 次、最短 3 秒间隔的内置限制，超过限制会被拒绝。</p></div>
+        </details>
+
+        <details class="faq-item" data-category="recording">
+          <summary><span class="qnum">13</span> 录制文件保存在哪里？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>默认在系统「视频 / ClearStage」。每段录制是一个以时间与主播名命名的文件夹，包含 <code>segments/</code>、<code>segments.json</code>、<code>recording.m3u8</code>，以及可选的 <code>recording.mp4</code>。可在「设置 → 录制与存储」修改目录。</p></div>
+        </details>
+        <details class="faq-item" data-category="recording">
+          <summary><span class="qnum">14</span> 录制很占空间，怎么控制？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>录制大小主要由画质与时长决定，原画约 1.5–3 GB / 小时。选择较低画质、缩短录制时间，或在录制库中定期清理不需要的内容，都能降低占用。</p><p>录制停止后如果生成了 MP4，可以删除 TS 分段以释放额外空间，但这样会破坏按分段切片的能力；建议保留到切片完成后再整理。</p></div>
+        </details>
+        <details class="faq-item" data-category="recording">
+          <summary><span class="qnum">15</span> 为什么没有生成 MP4？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>MP4 合并需要 FFmpeg。没有检测到 FFmpeg 时，录制会保留为 M3U8 + TS，仍然可以播放和按分段切片。安装 FFmpeg 并在设置中检测后，下一次停止录制会自动合并。</p></div>
+        </details>
+        <details class="faq-item" data-category="recording">
+          <summary><span class="qnum">16</span> 切片失败或时间对不上？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>如果没有 FFmpeg，澄幕会按 HLS 分段边界导出，起止时间可能偏移 2–3 秒，这是预期行为。有 FFmpeg 时会精确到帧。</p><p>起止时间至少间隔 0.5 秒；录制仍在进行时，建议先停止并等待合并完成再精确切片。若源流有严重时间戳问题，仍可能失败，可改用分段方式。</p></div>
+        </details>
+
+        <details class="faq-item" data-category="music">
+          <summary><span class="qnum">17</span> 自动识别歌曲需要什么？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>需要 FFmpeg、一个 AudD 或 ACRCloud 账号，以及其 API 凭证。开启后，录制期间每约 30 秒采样一次，识别到切歌时把上一首保存为 M4A。识别服务可能产生第三方费用。</p><p>纯音乐、翻唱、串烧或环境噪音下准确率会下降。重要内容建议从录制时间线手动标记。</p></div>
+        </details>
+        <details class="faq-item" data-category="music">
+          <summary><span class="qnum">18</span> 手动标记歌曲为什么失败？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>手动标记需要 FFmpeg 导出音频，并且录制文件必须已经写入完成。检查 FFmpeg 是否在设置中显示已就绪，以及起止时间是否落在录制时长内、间隔至少 5 秒。</p></div>
+        </details>
+
+        <details class="faq-item" data-category="data">
+          <summary><span class="qnum">19</span> 主播数据为什么是空的？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>数据从你使用澄幕并打开直播间之后才开始记录。应用关闭期间不会采样；主播未开播、接口风控或网络失败也会造成缺口。至少保持一个采样周期（约 1 分钟）后刷新。</p><p>粉丝数与公开礼物是估算值，不代表平台结算后台。通用直链模式没有礼物和粉丝数据源。</p></div>
+        </details>
+        <details class="faq-item" data-category="data">
+          <summary><span class="qnum">20</span> 澄幕会把我的数据上传吗？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>不会。应用没有云端账号体系，也不含遥测和广告。直播流由本机媒体代理转发；设置、登录 Cookie、录制、切片、歌曲与数据快照都保存在本机。只有访问 B 站接口或你配置的歌曲识别服务时会联网。</p></div>
+        </details>
+
+        <details class="faq-item" data-category="platform">
+          <summary><span class="qnum">21</span> 可以录制后二次分发或商用吗？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>能否录制、剪辑与再分发取决于内容版权、主播授权和平台服务条款。澄幕只是本地工具，不授予任何内容权利。请仅录制你有权访问和保存的内容，不要用于商业盗播、付费内容绕过或侵犯他人权益。</p><p>礼物打赏请通过官方直播间完成；澄幕不代理充值、送礼或支付。</p></div>
+        </details>
+      </div>
+
+      <div class="faq-no-result">没有匹配的问题。试试更短的关键词，或查看 <a href="docs.html" style="color:var(--mint)">使用文档</a>。</div>
+
+      <div class="faq-contact">
+        <h3>还是没解决？</h3>
+        <p>请先确认应用版本、Windows 版本与问题发生时间，并附上相关提示文字。不要发送完整 Cookie、API 密钥或包含隐私的录制文件。公开测试期的反馈会用于下一版修复。</p>
+        <a class="btn btn-ghost btn-sm" href="docs.html#troubleshooting">查看故障排查 <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="34" height="34" /><span class="brand-name">澄幕 <span>ClearStage</span></span></a>
+          <p>本地优先的 PC 直播工作台。把画面、弹幕、录制与数据放回同一张桌子。</p>
+        </div>
+        <div class="footer-col"><h4>Product</h4><a href="index.html#features">功能</a><a href="download.html">下载</a><a href="docs.html">使用文档</a></div>
+        <div class="footer-col"><h4>Support</h4><a href="faq.html">常见问题</a><a href="docs.html#troubleshooting">故障排查</a><a href="docs.html#privacy">数据与隐私</a></div>
+        <div class="footer-col"><h4>Notes</h4><a href="docs.html#direct">通用直链</a><a href="docs.html#install">系统要求</a><a href="https://live.bilibili.com/" target="_blank" rel="noopener noreferrer">哔哩哔哩直播 ↗</a></div>
+      </div>
+      <div class="footer-bottom">
+        <p>© <span data-year>2026</span> ClearStage. 澄幕是第三方本地工具，与哔哩哔哩无隶属关系。请仅观看、录制你有权访问的内容，遵守平台服务条款与主播授权，不得用于商业盗播或再分发。</p>
+        <div class="footer-legal">Sora / Noto Serif SC · SIL OFL<br />Built for the desktop.</div>
+      </div>
+    </div>
+  </footer>
+  <script src="assets/site.js" defer></script>
+</body>
+</html>
