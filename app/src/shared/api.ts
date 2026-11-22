@@ -9,8 +9,6 @@ import type {
   Clip,
   FeedResult,
   PlaybackInfo,
-  QrLoginResult,
-  QrLoginSession,
   Recording,
   RecordingClipInput,
   RecordingProgress,
@@ -78,8 +76,6 @@ export interface ClearStageApi {
     onBurst(listener: (state: BurstState) => void): () => void
   }
   auth: {
-    startQr(): Promise<QrLoginSession>
-    pollQr(key: string): Promise<QrLoginResult>
     importCookies(input: BiliCookieInput): Promise<BiliAccount>
     me(): Promise<BiliAccount>
     logout(): Promise<void>

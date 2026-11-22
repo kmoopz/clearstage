@@ -48,6 +48,7 @@ export default function App() {
     const theme = themeById(settings.themeId)
     const root = document.documentElement
     root.dataset.mode = theme.mode
+    root.dataset.theme = theme.id
     root.style.setProperty('--bg', theme.bg)
     root.style.setProperty('--surface', theme.surface)
     root.style.setProperty('--text', theme.text)
@@ -55,6 +56,9 @@ export default function App() {
     root.style.setProperty('--line', theme.line)
     root.style.setProperty('--accent', settings.accent || theme.accent)
     root.style.setProperty('--accent-contrast', theme.mode === 'light' ? '#06251d' : '#04120e')
+    root.style.setProperty('--theme-art', theme.art ? `url("${theme.art}")` : 'none')
+    root.style.setProperty('--theme-art-opacity', String(theme.artOpacity ?? 0.26))
+    root.style.setProperty('--theme-art-position', theme.artPosition ?? 'center')
     let style = document.getElementById('clearstage-custom-css') as HTMLStyleElement | null
     if (!style) {
       style = document.createElement('style')
@@ -67,6 +71,11 @@ export default function App() {
   useEffect(() => {
     if (info) document.title = `澄幕 ClearStage · ${info.version}`
   }, [info])
+
+  useEffect(() => {
+    const workspace = document.querySelector('.workspace')
+    if (workspace) workspace.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [page])
 
   if (!booted) {
     return (
@@ -101,6 +110,7 @@ export default function App() {
   return (
     <div className={`app-shell ${info?.isDemo ? 'is-demo' : ''}`}>
       <div className="app-ambient" aria-hidden="true">
+        <span className="ambient-art" />
         <span className="ambient-glow glow-a" />
         <span className="ambient-glow glow-b" />
         <span className="ambient-grid" />

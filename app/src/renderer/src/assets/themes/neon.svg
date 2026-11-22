@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="night" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#03060f"/>
+      <stop offset=".55" stop-color="#071222"/>
+      <stop offset="1" stop-color="#050912"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a2730"/>
+      <stop offset="1" stop-color="#03080d"/>
+    </linearGradient>
+    <linearGradient id="beamA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#68f7ff" stop-opacity=".02"/>
+      <stop offset="1" stop-color="#68f7ff" stop-opacity=".28"/>
+    </linearGradient>
+    <linearGradient id="beamB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff58b8" stop-opacity=".02"/>
+      <stop offset="1" stop-color="#ff58b8" stop-opacity=".26"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#night)"/>
+  <circle cx="1240" cy="210" r="190" fill="#68f7ff" opacity=".08"/>
+  <circle cx="1240" cy="210" r="72" fill="#bffbff" opacity=".9"/>
+  <circle cx="1264" cy="188" r="62" fill="#071222" opacity=".48"/>
+  <path d="M0 714h1600v286H0Z" fill="url(#floor)"/>
+  <g stroke="#68f7ff" opacity=".18">
+    <path d="M0 748h1600M0 792h1600M0 844h1600M0 906h1600M0 980h1600"/>
+  </g>
+  <g stroke="#68f7ff" opacity=".14">
+    <path d="M-120 1000 520 714M120 1000 640 714M360 1000 760 714M600 1000 880 714M840 1000 1000 714M1080 1000 1120 714M1320 1000 1240 714M1560 1000 1360 714M1800 1000 1480 714"/>
+  </g>
+  <g fill="#040b13">
+    <path d="M80 470h118v354H80zM206 382h96v442h-96zM316 542h150v282H316zM486 438h72v386h-72z"/>
+    <path d="M1132 504h110v320h-110zM1258 414h88v410h-88zM1362 548h142v276h-142zM1518 466h66v358h-66z"/>
+  </g>
+  <g fill="#68f7ff" opacity=".72">
+    <rect x="102" y="500" width="7" height="42" rx="2"/><rect x="124" y="500" width="7" height="42" rx="2"/>
+    <rect x="146" y="500" width="7" height="42" rx="2"/><rect x="226" y="418" width="8" height="34" rx="2"/>
+    <rect x="248" y="418" width="8" height="34" rx="2"/><rect x="344" y="572" width="70" height="6" rx="3"/>
+    <rect x="1160" y="536" width="64" height="6" rx="3"/><rect x="1280" y="454" width="7" height="38" rx="2"/>
+    <rect x="1302" y="454" width="7" height="38" rx="2"/><rect x="1392" y="590" width="78" height="6" rx="3"/>
+  </g>
+  <g fill="#ff58b8" opacity=".62">
+    <rect x="124" y="598" width="8" height="38" rx="2"/><rect x="146" y="598" width="8" height="38" rx="2"/>
+    <rect x="1200" y="612" width="7" height="42" rx="2"/><rect x="1222" y="612" width="7" height="42" rx="2"/>
+    <rect x="1416" y="650" width="8" height="34" rx="2"/><rect x="1438" y="650" width="8" height="34" rx="2"/>
+  </g>
+  <g opacity=".36">
+    <path d="M1060 0 960 714h130L1150 0Z" fill="url(#beamA)"/>
+    <path d="M690 0 800 714H700L600 0Z" fill="url(#beamB)"/>
+  </g>
+  <g stroke="#68f7ff" stroke-width="2" opacity=".24" fill="none">
+    <path d="M0 330h1600"/><path d="M0 180h1600"/>
+  </g>
+  <g fill="#071222">
+    <path d="M302 286h64v18h-64zM318 304h32v112h-32z"/>
+    <path d="M1380 280h56v16h-56zM1398 296h20v94h-20z"/>
+  </g>
+  <g fill="#d8fdff" font-family="monospace" font-size="22" letter-spacing="5" opacity=".6">
+    <text x="124" y="694">SIGNAL / NIGHT</text>
+    <text x="1128" y="704">NEON / 24H</text>
+  </g>
+</svg>

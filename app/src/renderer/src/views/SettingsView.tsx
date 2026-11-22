@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { QRCodeSVG } from 'qrcode.react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   AlertTriangle,
   Check,
@@ -18,7 +17,6 @@ import {
   MonitorPlay,
   Music2,
   Palette,
-  QrCode,
   RefreshCw,
   ShieldCheck,
   SlidersHorizontal,
@@ -34,7 +32,7 @@ import { errorMessage, formatNumber } from '../lib/format'
 type Section = 'account' | 'playback' | 'recording' | 'songs' | 'appearance' | 'data'
 
 const SECTIONS: Array<{ key: Section; label: string; icon: typeof UserRound; hint: string }> = [
-  { key: 'account', label: '账号与登录', icon: UserRound, hint: 'B 站扫码、弹幕身份' },
+  { key: 'account', label: '账号与登录', icon: UserRound, hint: 'B 站 Cookie、弹幕身份' },
   { key: 'playback', label: '播放偏好', icon: MonitorPlay, hint: '画质、布局与弹幕' },
   { key: 'recording', label: '录制与存储', icon: HardDrive, hint: '目录、FFmpeg、切片' },
   { key: 'songs', label: '歌曲识别', icon: Music2, hint: '自动分轨服务' },
@@ -54,7 +52,6 @@ export function SettingsView() {
   const toast = useAppStore((state) => state.toast)
   const setThemeOpen = useAppStore((state) => state.setThemeOpen)
   const [section, setSection] = useState<Section>('account')
-  const [qrOpen, setQrOpen] = useState(false)
   const [manualOpen, setManualOpen] = useState(false)
   const [ffmpeg, setFfmpeg] = useState<{ available: boolean; path?: string } | null>(null)
   const [checkingFfmpeg, setCheckingFfmpeg] = useState(false)
@@ -160,7 +157,7 @@ export function SettingsView() {
               <div className="settings-section-head">
                 <span className="eyebrow">IDENTITY</span>
                 <h2>账号与登录</h2>
-                <p>扫码登录后，可以发送弹幕、使用更高画质，并让直播数据更完整。Cookie 只保存在本机。</p>
+                <p>登录后可以发送弹幕、使用更高画质，并让直播数据更完整。Cookie 只保存在本机。</p>
               </div>
               {auth.loggedIn ? (
                 <div className="account-card">
@@ -185,27 +182,21 @@ export function SettingsView() {
                     <button className="btn btn-soft btn-sm" onClick={() => setManualOpen(true)}>
                       <Cookie size={14} /> 更新 Cookie
                     </button>
-                    <button className="btn btn-soft btn-sm" onClick={() => setQrOpen(true)}>
-                      <QrCode size={14} /> 更换账号
-                    </button>
                   </div>
                 </div>
               ) : (
                 <div className="account-card is-logged-out">
                   <div className="account-main">
-                    <span className="account-avatar placeholder"><QrCode size={22} /></span>
+                    <span className="account-avatar placeholder"><Cookie size={22} /></span>
                     <div>
                       <span className="eyebrow">BILIBILI ACCOUNT</span>
-                      <h3>扫码登录 B 站</h3>
-                      <p>登录后才能发送弹幕、连发和收藏常用弹幕。观看与录制无需登录。</p>
+                      <h3>用浏览器 Cookie 登录</h3>
+                      <p>从已登录的浏览器复制 SESSDATA，登录后才能发送弹幕、连发和收藏常用弹幕。观看与录制无需登录。</p>
                     </div>
                   </div>
                   <div className="account-actions">
-                    <button className="btn btn-primary" onClick={() => setQrOpen(true)}>
-                      <QrCode size={15} /> 打开扫码登录
-                    </button>
-                    <button className="btn btn-ghost btn-sm" onClick={() => setManualOpen(true)}>
-                      <Cookie size={14} /> 扫码失败？粘贴 Cookie
+                    <button className="btn btn-primary" onClick={() => setManualOpen(true)}>
+                      <Cookie size={15} /> 粘贴浏览器 Cookie
                     </button>
                   </div>
                 </div>
@@ -457,7 +448,15 @@ export function SettingsView() {
                     className={`appearance-theme ${settings.themeId === item.id ? 'is-active' : ''}`}
                     onClick={() => void updateSettings({ themeId: item.id, accent: item.accent })}
                   >
-                    <span className="appearance-swatch" style={{ background: item.bg }}>
+                    <span
+                      className="appearance-swatch"
+                      style={{
+                        background: item.bg,
+                        backgroundImage: item.art ? `url(${item.art})` : undefined,
+                        backgroundSize: 'cover',
+                        backgroundPosition: item.artPosition ?? 'center'
+                      }}
+                    >
                       <i style={{ background: item.surface }} />
                       <b style={{ background: item.accent }} />
                     </span>
@@ -535,20 +534,6 @@ export function SettingsView() {
         </div>
       </div>
 
-      {qrOpen && (
-        <QrLoginModal
-          onClose={() => setQrOpen(false)}
-          onManual={() => {
-            setQrOpen(false)
-            setManualOpen(true)
-          }}
-          onSuccess={(account) => {
-            setAuth(account)
-            setQrOpen(false)
-            toast('success', '登录成功', `欢迎，${account.uname ?? 'B站用户'}`)
-          }}
-        />
-      )}
       {manualOpen && (
         <CookieLoginModal
           onClose={() => setManualOpen(false)}
@@ -566,146 +551,6 @@ export function SettingsView() {
         />
       )}
     </section>
-  )
-}
-
-function QrLoginModal({
-  onClose,
-  onSuccess,
-  onManual
-}: {
-  onClose: () => void
-  onSuccess: (account: BiliAccount) => void
-  onManual: () => void
-}) {
-  const [session, setSession] = useState<{ key: string; url: string; expiresAt: number } | null>(null)
-  const [status, setStatus] = useState<'loading' | 'pending' | 'scanned' | 'confirmed' | 'expired' | 'error'>('loading')
-  const [message, setMessage] = useState('正在生成二维码…')
-  const [remaining, setRemaining] = useState(180)
-  const busyRef = useRef(false)
-  const successRef = useRef(onSuccess)
-  successRef.current = onSuccess
-
-  async function generate() {
-    setStatus('loading')
-    setMessage('正在生成二维码…')
-    try {
-      const next = await window.clearstage.auth.startQr()
-      setSession(next)
-      setStatus('pending')
-      setMessage('用哔哩哔哩手机客户端扫码')
-      setRemaining(Math.max(1, Math.floor((next.expiresAt - Date.now()) / 1000)))
-    } catch (error) {
-      setStatus('error')
-      setMessage(errorMessage(error))
-    }
-  }
-
-  useEffect(() => {
-    void generate()
-  }, [])
-
-  useEffect(() => {
-    if (!session) return
-    const timer = setInterval(() => {
-      setRemaining(Math.max(0, Math.floor((session.expiresAt - Date.now()) / 1000)))
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [session])
-
-  useEffect(() => {
-    if (!session) return
-    let alive = true
-    const timer = setInterval(async () => {
-      if (busyRef.current) return
-      busyRef.current = true
-      try {
-        const result = await window.clearstage.auth.pollQr(session.key)
-        if (!alive) return
-        setMessage(result.message)
-        if (result.status === 'pending') setStatus('pending')
-        else if (result.status === 'scanned') setStatus('scanned')
-        else if (result.status === 'confirmed' && result.account) {
-          setStatus('confirmed')
-          clearInterval(timer)
-          setTimeout(() => successRef.current(result.account!), 550)
-        } else if (result.status === 'expired') {
-          setStatus('expired')
-          clearInterval(timer)
-        } else if (result.status === 'error') {
-          setStatus('error')
-          clearInterval(timer)
-        }
-      } catch (error) {
-        if (alive) {
-          setStatus('error')
-          setMessage(errorMessage(error))
-        }
-      } finally {
-        busyRef.current = false
-      }
-    }, 2200)
-    return () => {
-      alive = false
-      clearInterval(timer)
-    }
-  }, [session])
-
-  return (
-    <div className="modal-backdrop" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
-      <div className="modal qr-modal" role="dialog" aria-modal="true" aria-labelledby="qr-title">
-        <div className="modal-head">
-          <div>
-            <span className="eyebrow">BILIBILI LOGIN</span>
-            <h2 id="qr-title">扫码登录</h2>
-          </div>
-          <button className="icon-btn" onClick={onClose} aria-label="关闭"><X size={18} /></button>
-        </div>
-        <div className="qr-body">
-          <div className={`qr-frame ${status === 'confirmed' ? 'is-success' : ''}`}>
-            {status === 'loading' && <Loader2 size={30} className="spin" />}
-            {session && status !== 'loading' && status !== 'confirmed' && (
-              <QRCodeSVG value={session.url} size={186} bgColor="#ffffff" fgColor="#0b1211" level="M" />
-            )}
-            {status === 'confirmed' && (
-              <div className="qr-success">
-                <CheckCircle2 size={40} />
-                <strong>登录成功</strong>
-                <p>正在同步账号信息…</p>
-              </div>
-            )}
-            {(status === 'expired' || status === 'error') && (
-              <div className="qr-expired">
-                <RefreshCw size={24} />
-                <p>{status === 'expired' ? '二维码已过期' : message}</p>
-                <button className="btn btn-primary btn-sm" onClick={() => void generate()}>
-                  重新生成
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="qr-copy">
-            <h3>{status === 'scanned' ? '已扫码，请在手机上确认' : status === 'expired' ? '二维码已过期' : '用手机扫码登录'}</h3>
-            <p>{message}</p>
-            {session && status !== 'expired' && status !== 'error' && (
-              <span className="qr-countdown">二维码有效期剩余 {Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, '0')}</span>
-            )}
-            <ol className="qr-steps">
-              <li><span>1</span> 打开哔哩哔哩手机客户端</li>
-              <li><span>2</span> 点击右上角扫一扫</li>
-              <li><span>3</span> 确认登录澄幕桌面端</li>
-            </ol>
-            <button type="button" className="btn btn-ghost btn-sm" style={{ marginTop: 14 }} onClick={onManual}>
-              <Cookie size={14} /> 扫码失败？粘贴浏览器 Cookie
-            </button>
-            <div className="qr-privacy">
-              <LockKeyhole size={13} />
-              <span>Cookie 仅保存在本机，使用系统安全存储加密。</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   )
 }
 

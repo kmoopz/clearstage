@@ -99,18 +99,6 @@ export interface BiliCookieInput {
   dedeUserId?: string
 }
 
-export interface QrLoginSession {
-  key: string
-  url: string
-  expiresAt: number
-}
-
-export interface QrLoginResult {
-  status: 'pending' | 'scanned' | 'confirmed' | 'expired' | 'error'
-  message: string
-  account?: BiliAccount
-}
-
 export interface RoomSnapshot {
   t: number
   online?: number
@@ -254,11 +242,18 @@ export interface AppInfo {
 
 export type FeedItemType = 'video' | 'dynamic' | 'image' | 'live' | 'forward'
 
+export interface FeedTextSegment {
+  type: 'text' | 'emoji'
+  text: string
+  icon?: string
+}
+
 export interface FeedItem {
   id: string
   type: FeedItemType
   title: string
   text?: string
+  richText?: FeedTextSegment[]
   cover?: string
   images?: string[]
   url: string
@@ -321,10 +316,6 @@ export interface WindowState {
   fullscreen: boolean
 }
 
-export interface LoginQrStart {
-  session: QrLoginSession
-}
-
 export interface RecordingStartOptions {
   roomId: string
   quality?: string
@@ -342,4 +333,7 @@ export interface ThemePreset {
   text: string
   muted: string
   line: string
+  art?: string
+  artOpacity?: number
+  artPosition?: string
 }

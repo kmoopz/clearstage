@@ -7,10 +7,9 @@ import type {
   BiliCookieInput,
   FeedItem,
   FeedResult,
+  FeedTextSegment,
   LiveStatus,
   PlaybackInfo,
-  QrLoginResult,
-  QrLoginSession,
   Room,
   StreamVariant,
   StreamerProfile,
@@ -125,22 +124,6 @@ export class BiliClient {
       changed = true
     }
     if (changed) this.saveCookies()
-  }
-
-  private absorbCookieQuery(url: string): void {
-    try {
-      const parsed = new URL(url)
-      let changed = false
-      for (const [name, value] of parsed.searchParams) {
-        if (['SESSDATA', 'bili_jct', 'DedeUserID', 'DedeUserID__ckMd5', 'sid'].includes(name)) {
-          this.cookies[name] = value
-          changed = true
-        }
-      }
-      if (changed) this.saveCookies()
-    } catch {
-      // ignore malformed URL
-    }
   }
 
   private cookieHeader(): string {
@@ -599,64 +582,6 @@ export class BiliClient {
     }
   }
 
-  async generateQr(): Promise<{ session: QrLoginSession }> {
-    await this.ensureFingerprint()
-    const data = await this.json<{ url: string; qrcode_key: string }>(
-      'https://passport.bilibili.com/x/passport-login/web/qrcode/generate?source=main-fe-header',
-      {
-        referer: 'https://www.bilibili.com/',
-        origin: 'https://www.bilibili.com'
-      }
-    )
-    return {
-      session: {
-        key: data.qrcode_key,
-        url: data.url,
-        expiresAt: Date.now() + 180_000
-      }
-    }
-  }
-
-  async pollQr(key: string): Promise<QrLoginResult> {
-    const response = await this.request(
-      `https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key=${encodeURIComponent(key)}&source=main-fe-header`,
-      {
-        referer: 'https://www.bilibili.com/',
-        origin: 'https://www.bilibili.com'
-      }
-    )
-    const parsed = (await response.json()) as {
-      code: number
-      message?: string
-      data?: { code: number; message?: string; url?: string }
-    }
-    if (parsed.code !== 0 || !parsed.data) {
-      return { status: 'error', message: parsed.message || '二维码状态查询失败' }
-    }
-    const code = parsed.data.code
-    if (code === 86101) return { status: 'pending', message: '等待扫码' }
-    if (code === 86090) return { status: 'scanned', message: '已扫码，请在手机上确认' }
-    if (code === 86038) return { status: 'expired', message: '二维码已过期，请刷新' }
-    if (code === 0) {
-      if (parsed.data.url) this.absorbCookieQuery(parsed.data.url)
-      this.saveCookies()
-      this.accountCache = undefined
-      const account = await this.getAccount(true)
-      if (account.loggedIn) {
-        return { status: 'confirmed', message: '登录成功', account }
-      }
-      if (this.hasLogin()) {
-        return {
-          status: 'confirmed',
-          message: '登录成功',
-          account: { loggedIn: true, cookieSaved: true }
-        }
-      }
-      return { status: 'error', message: '登录确认成功，但 Cookie 保存失败，请重试' }
-    }
-    return { status: 'error', message: parsed.data.message || `未知登录状态 ${code}` }
-  }
-
   async logout(): Promise<void> {
     for (const name of ['SESSDATA', 'bili_jct', 'DedeUserID', 'DedeUserID__ckMd5', 'sid']) {
       delete this.cookies[name]
@@ -808,8 +733,9 @@ export class BiliClient {
     const publishedAt = Date.parse(String(author.pub_ts ? Number(author.pub_ts) * 1000 : Date.now()))
     const authorName = String(author.name ?? '')
     const baseUrl = `https://t.bilibili.com/${id}`
-    const desc = (dynamic.desc as { text?: string; rich_text_nodes?: Array<{ text?: string }> } | undefined)
-      ?.text
+    const desc = (dynamic.desc as { text?: string; rich_text_nodes?: Array<Record<string, unknown>> } | undefined)
+    const descText = desc?.text
+    const descRich = this.normalizeRichText(desc)
     const archive = major.archive as
       | {
           bvid?: string
@@ -838,15 +764,21 @@ export class BiliClient {
       }
     }
     const opus = major.opus as
-      | { title?: string; summary?: { text?: string }; pics?: Array<{ url?: string }> }
+      | {
+          title?: string
+          summary?: { text?: string; rich_text_nodes?: Array<Record<string, unknown>> }
+          pics?: Array<{ url?: string }>
+        }
       | undefined
     if (opus) {
       const images = (opus.pics ?? []).map((pic) => this.fixImage(pic.url)).filter(Boolean) as string[]
+      const opusRich = this.normalizeRichText(opus.summary)
       return {
         id,
         type: images.length ? 'image' : 'dynamic',
-        title: opus.title || desc?.slice(0, 50) || '动态',
-        text: opus.summary?.text || desc || '',
+        title: opus.title || descText?.slice(0, 50) || '动态',
+        text: opus.summary?.text || descText || '',
+        richText: opusRich ?? descRich,
         images,
         cover: images[0],
         url: baseUrl,
@@ -864,8 +796,9 @@ export class BiliClient {
       return {
         id,
         type: 'image',
-        title: desc?.slice(0, 80) || '图片动态',
-        text: desc || '',
+        title: descText?.slice(0, 80) || '图片动态',
+        text: descText || '',
+        richText: descRich,
         images,
         cover: images[0],
         url: baseUrl,
@@ -889,8 +822,9 @@ export class BiliClient {
     return {
       id,
       type: raw.type === 'DYNAMIC_TYPE_FORWARD' ? 'forward' : 'dynamic',
-      title: desc?.slice(0, 80) || '动态',
-      text: desc || '',
+      title: descText?.slice(0, 80) || '动态',
+      text: descText || '',
+      richText: descRich,
       url: baseUrl,
       publishedAt: Number.isFinite(publishedAt) ? publishedAt : Date.now(),
       author: authorName,
@@ -898,9 +832,29 @@ export class BiliClient {
     }
   }
 
+  private normalizeRichText(value: unknown): FeedTextSegment[] | undefined {
+    const nodes = (value as { rich_text_nodes?: Array<Record<string, unknown>> } | undefined)?.rich_text_nodes
+    if (!nodes?.length) return undefined
+    const segments: FeedTextSegment[] = []
+    for (const node of nodes) {
+      const text = String(node.text ?? '')
+      const type = String(node.type ?? '')
+      const emoji = node.emoji as { icon_url?: string; text?: string } | undefined
+      if (type.includes('EMOJI') || emoji?.icon_url) {
+        const icon = this.fixImage(emoji?.icon_url)
+        if (icon) segments.push({ type: 'emoji', text: emoji?.text || text || '[表情]', icon })
+        else if (text) segments.push({ type: 'text', text })
+      } else if (text) {
+        segments.push({ type: 'text', text })
+      }
+    }
+    return segments.length ? segments : undefined
+  }
+
   private fixImage(url?: string | null): string | undefined {
     if (!url) return undefined
     if (url.startsWith('//')) return `https:${url}`
+    if (url.startsWith('http://')) return `https://${url.slice(7)}`
     return url
   }
 

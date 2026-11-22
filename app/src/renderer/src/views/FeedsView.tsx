@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { startTransition, useEffect, useMemo, useState } from 'react'
 import {
   AlertTriangle,
   ArrowUpRight,
@@ -7,15 +7,15 @@ import {
   Eye,
   Film,
   Image as ImageIcon,
-  Loader2,
   MessageCircle,
   Radio,
   RefreshCw,
   Rss,
   ThumbsUp,
-  Users
+  Users,
+  X
 } from 'lucide-react'
-import type { FeedItem, FeedResult, StreamerProfile } from '../../../shared/types'
+import type { FeedItem, FeedResult, FeedTextSegment, StreamerProfile } from '../../../shared/types'
 import { useAppStore } from '../store'
 import { DEMO_FEED } from '../lib/demo'
 import { errorMessage, formatNumber, timeAgo, uidSalt } from '../lib/format'
@@ -34,6 +34,7 @@ export function FeedsView() {
   const [profile, setProfile] = useState<StreamerProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [preview, setPreview] = useState<string | null>(null)
 
   const room = rooms.find((item) => item.id === roomId) ?? rooms[0]
   const isDirect = Boolean(room) && room?.platform !== 'bilibili'
@@ -132,7 +133,7 @@ export function FeedsView() {
         </div>
         <div className="page-head-actions">
           <div className="select-wrap">
-            <select value={room?.id ?? ''} onChange={(event) => setRoomId(event.target.value)}>
+            <select value={room?.id ?? ''} onChange={(event) => startTransition(() => setRoomId(event.target.value))}>
               {rooms.map((item) => (
                 <option key={item.id} value={item.id}>{item.streamer} · {item.title.slice(0, 12)}</option>
               ))}
@@ -186,10 +187,10 @@ export function FeedsView() {
 
           <div className="feed-toolbar">
             <div className="library-tabs compact-tabs">
-              <button className={tab === 'dynamic' ? 'is-active' : ''} onClick={() => setTab('dynamic')}>
+              <button className={tab === 'dynamic' ? 'is-active' : ''} onClick={() => startTransition(() => setTab('dynamic'))}>
                 <Rss size={14} /> 动态
               </button>
-              <button className={tab === 'video' ? 'is-active' : ''} onClick={() => setTab('video')}>
+              <button className={tab === 'video' ? 'is-active' : ''} onClick={() => startTransition(() => setTab('video'))}>
                 <Film size={14} /> 视频
               </button>
             </div>
@@ -201,7 +202,7 @@ export function FeedsView() {
           {!auth.loggedIn && (
             <div className="notice notice-mint feed-notice">
               <Users size={15} />
-              <p>动态和更高画质属于账号权限内容。请使用你自己的 B 站账号扫码登录；澄幕不会用你的账号执行其他操作。</p>
+              <p>动态和更高画质属于账号权限内容。请使用你自己的 B 站账号，在设置页粘贴浏览器 Cookie；澄幕不会用你的账号执行其他操作。</p>
               <button className="btn btn-soft btn-sm" onClick={() => setPage('settings')}>去登录</button>
             </div>
           )}
@@ -214,9 +215,15 @@ export function FeedsView() {
           )}
 
           {loading ? (
-            <div className="feed-loading">
-              <Loader2 size={22} className="spin" />
-              <p>正在拉取纯净内容流…</p>
+            <div className="feed-loading-skeleton" aria-busy="true" aria-label="正在加载动态">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div className="feed-skeleton-card" key={index}>
+                  <div className="feed-skeleton-head"><i /><span /></div>
+                  <div className="feed-skeleton-line wide" />
+                  <div className="feed-skeleton-line" />
+                  <div className="feed-skeleton-cover" />
+                </div>
+              ))}
             </div>
           ) : visibleItems.length === 0 ? (
             <div className="library-empty wide">
@@ -237,6 +244,7 @@ export function FeedsView() {
                   key={item.id}
                   item={item}
                   onOpen={() => void window.clearstage.app.openExternal(item.url)}
+                  onPreview={setPreview}
                 />
               ))}
             </div>
@@ -249,13 +257,62 @@ export function FeedsView() {
           )}
         </>
       )}
+
+      {preview && (
+        <div className="feed-lightbox" role="dialog" aria-modal="true" onClick={() => setPreview(null)}>
+          <button className="feed-lightbox-close" aria-label="关闭图片" onClick={() => setPreview(null)}>
+            <X size={18} />
+          </button>
+          <img src={preview} alt="" onClick={(event) => event.stopPropagation()} />
+        </div>
+      )}
     </section>
   )
 }
 
+function FeedRichText({ item }: { item: FeedItem }) {
+  if (item.richText?.length) {
+    return (
+      <span className="feed-rich-text">
+        {item.richText.map((segment: FeedTextSegment, index: number) =>
+          segment.type === 'emoji' && segment.icon ? (
+            <img
+              key={`${segment.icon}-${index}`}
+              className="feed-emoji"
+              src={segment.icon}
+              alt={segment.text}
+              title={segment.text}
+              loading="lazy"
+              decoding="async"
+              referrerPolicy="no-referrer"
+              onError={(event) => {
+                event.currentTarget.style.display = 'none'
+              }}
+            />
+          ) : (
+            <span key={`text-${index}`}>{segment.text}</span>
+          )
+        )}
+      </span>
+    )
+  }
+  return <>{item.text}</>
+}
+
 function FeedCover({ item, tall = false }: { item: FeedItem; tall?: boolean }) {
-  if (item.cover) {
-    return <img className={`feed-cover ${tall ? 'is-tall' : ''}`} src={item.cover} alt="" loading="lazy" />
+  const [failed, setFailed] = useState(false)
+  if (item.cover && !failed) {
+    return (
+      <img
+        className={`feed-cover ${tall ? 'is-tall' : ''}`}
+        src={item.cover}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        referrerPolicy="no-referrer"
+        onError={() => setFailed(true)}
+      />
+    )
   }
   return (
     <div className={`feed-cover is-generated ${tall ? 'is-tall' : ''} feed-art-${uidSalt(item.id) % 4}`}>
@@ -263,6 +320,28 @@ function FeedCover({ item, tall = false }: { item: FeedItem; tall?: boolean }) {
       {item.type === 'video' ? <Film size={24} /> : item.type === 'live' ? <Radio size={24} /> : <ImageIcon size={24} />}
       <span>{item.type === 'video' ? 'VIDEO' : 'MOMENT'}</span>
     </div>
+  )
+}
+
+function FeedImage({ src, alt = '', onClick }: { src: string; alt?: string; onClick?: () => void }) {
+  const [failed, setFailed] = useState(false)
+  if (failed) {
+    return (
+      <span className="feed-image-fallback" aria-label="图片加载失败">
+        <ImageIcon size={16} />
+      </span>
+    )
+  }
+  return (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      referrerPolicy="no-referrer"
+      onClick={onClick}
+      onError={() => setFailed(true)}
+    />
   )
 }
 
@@ -279,7 +358,7 @@ function VideoCard({ item }: { item: FeedItem }) {
       </div>
       <div className="video-feed-body">
         <h3>{item.title}</h3>
-        <p>{item.text}</p>
+        <p><FeedRichText item={item} /></p>
         <div className="video-stats">
           <span><Eye size={11} /> {formatNumber(item.stats?.views)}</span>
           <span><MessageCircle size={11} /> {formatNumber(item.stats?.comments)}</span>
@@ -290,7 +369,15 @@ function VideoCard({ item }: { item: FeedItem }) {
   )
 }
 
-function DynamicCard({ item, onOpen }: { item: FeedItem; onOpen: () => void }) {
+function DynamicCard({
+  item,
+  onOpen,
+  onPreview
+}: {
+  item: FeedItem
+  onOpen: () => void
+  onPreview: (url: string) => void
+}) {
   return (
     <article className="dynamic-card">
       <div className="dynamic-head">
@@ -307,7 +394,7 @@ function DynamicCard({ item, onOpen }: { item: FeedItem; onOpen: () => void }) {
       <div className={`dynamic-body ${item.cover ? 'has-cover' : ''}`}>
         <div className="dynamic-text">
           <h3>{item.title}</h3>
-          {item.text && <p>{item.text}</p>}
+          {item.text && <p><FeedRichText item={item} /></p>}
           {item.stats && (
             <div className="dynamic-stats">
               {item.stats.views !== undefined && <span><Eye size={11} /> {formatNumber(item.stats.views)}</span>}
@@ -318,9 +405,17 @@ function DynamicCard({ item, onOpen }: { item: FeedItem; onOpen: () => void }) {
         </div>
         {item.type === 'video' && <FeedCover item={item} />}
         {item.type === 'image' && item.images && item.images.length > 0 && (
-          <div className={`dynamic-images count-${Math.min(4, item.images.length)}`}>
-            {item.images.slice(0, 4).map((image, index) => (
-              <img key={`${image}-${index}`} src={image} alt="" loading="lazy" />
+          <div className={`dynamic-images count-${Math.min(9, item.images.length)}`}>
+            {item.images.slice(0, 9).map((image, index) => (
+              <button
+                key={`${image}-${index}`}
+                type="button"
+                className="dynamic-image-button"
+                onClick={() => onPreview(image)}
+                title="查看大图"
+              >
+                <FeedImage src={image} />
+              </button>
             ))}
           </div>
         )}

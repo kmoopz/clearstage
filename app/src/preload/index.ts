@@ -70,8 +70,6 @@ const api: ClearStageApi = {
     }
   },
   auth: {
-    startQr: () => ipcRenderer.invoke('auth:qr'),
-    pollQr: (key: string) => ipcRenderer.invoke('auth:poll', key),
     importCookies: (input: unknown) => ipcRenderer.invoke('auth:import', input),
     me: () => ipcRenderer.invoke('auth:me'),
     logout: () => ipcRenderer.invoke('auth:logout')

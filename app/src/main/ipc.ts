@@ -207,8 +207,6 @@ export function registerIpc(context: IpcContext): void {
   })
   ipcMain.handle('danmaku:remove-history', (_event, id: string) => store.removeHistory(id))
 
-  ipcMain.handle('auth:qr', () => bili.generateQr())
-  ipcMain.handle('auth:poll', (_event, key: string) => bili.pollQr(key))
   ipcMain.handle('auth:import', (_event, input: BiliCookieInput) => bili.importCookies(input))
   ipcMain.handle('auth:me', () => bili.getAccount(true))
   ipcMain.handle('auth:logout', () => bili.logout())

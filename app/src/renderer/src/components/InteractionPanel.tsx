@@ -104,7 +104,7 @@ export function InteractionPanel() {
       return
     }
     if (!auth.loggedIn) {
-      setLocalError('请先在设置中扫码登录 B 站账号')
+      setLocalError('请先在设置中粘贴 B 站 Cookie 登录')
       return
     }
     setSending(true)

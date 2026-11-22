@@ -9,6 +9,10 @@ import type {
 } from '../../../shared/types'
 
 const now = Date.now()
+const demoStarlight = new URL('../assets/themes/starlight.svg', import.meta.url).href
+const demoSakura = new URL('../assets/themes/sakura.svg', import.meta.url).href
+const demoStarEmoji = new URL('../assets/themes/emoji-star.svg', import.meta.url).href
+
 
 export const DEMO_ROOMS: Room[] = [
   {
@@ -302,6 +306,7 @@ export const DEMO_FEED: FeedItem[] = [
     type: 'video',
     title: '凌晨三点的直播间，藏着城市里最温柔的声音',
     text: '这一期我们跟着声音，走过便利店、末班车和还没熄灯的房间。',
+    cover: demoStarlight,
     url: 'https://www.bilibili.com/',
     publishedAt: now - 2 * 3600_000,
     author: '澄幕放映室',
@@ -312,6 +317,8 @@ export const DEMO_FEED: FeedItem[] = [
     type: 'image',
     title: '今晚的直播间布置',
     text: '换了一块新的调音台，夜里的声音会更干净一点。',
+    images: [demoStarlight, demoSakura],
+    cover: demoStarlight,
     url: 'https://t.bilibili.com/',
     publishedAt: now - 26 * 3600_000,
     author: '澄幕放映室',
@@ -322,6 +329,10 @@ export const DEMO_FEED: FeedItem[] = [
     type: 'dynamic',
     title: '关于多画面的一点想法',
     text: '同时看四路比赛，不是为了看得更多，而是为了不错过那些同时发生的瞬间。',
+    richText: [
+      { type: 'text', text: '同时看四路比赛，不是为了看得更多，而是为了不错过那些同时发生的瞬间。 ' },
+      { type: 'emoji', text: '[星星]', icon: demoStarEmoji }
+    ],
     url: 'https://t.bilibili.com/',
     publishedAt: now - 3 * 86_400_000,
     author: '澄幕放映室',
@@ -332,6 +343,7 @@ export const DEMO_FEED: FeedItem[] = [
     type: 'video',
     title: '总决赛二路解说｜全场回放精选',
     text: '把最值得反复看的三十分钟剪了出来。',
+    cover: demoSakura,
     url: 'https://www.bilibili.com/',
     publishedAt: now - 5 * 86_400_000,
     author: '澄幕放映室',

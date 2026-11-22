@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#bfe8ef"/>
+      <stop offset=".48" stop-color="#e9f5ee"/>
+      <stop offset="1" stop-color="#f8f1dd"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8fd4d4"/>
+      <stop offset=".55" stop-color="#58b5b9"/>
+      <stop offset="1" stop-color="#1e7f8c"/>
+    </linearGradient>
+    <radialGradient id="sun">
+      <stop offset="0" stop-color="#fff7d6"/>
+      <stop offset=".55" stop-color="#ffe7a8" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#ffe1a0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#sky)"/>
+  <circle cx="1190" cy="260" r="210" fill="url(#sun)"/>
+  <circle cx="1190" cy="260" r="72" fill="#fff8df"/>
+  <g fill="#ffffff" opacity=".62">
+    <path d="M180 242c40-42 99-30 122 0 35-20 77-2 83 25H150c5-15 16-23 30-25Z"/>
+    <path d="M720 168c30-30 75-22 93 0 27-14 59 0 64 20H696c3-10 13-17 24-20Z"/>
+    <path d="M1310 402c30-28 70-18 86 0 24-13 54 0 58 18h-171c4-9 14-15 27-18Z"/>
+  </g>
+  <path d="M0 552c160-20 290 18 440 10 200-10 330-48 520-30 210 20 390 22 640-6v474H0Z" fill="url(#sea)"/>
+  <g stroke="#e8ffff" fill="none" opacity=".55">
+    <path d="M0 630c110-22 220 22 340 6s200-32 320-14 230 30 370 8 260-22 390 0 150 10 180 2"/>
+    <path d="M0 716c150-26 250 20 390 6s230-28 390-10 260 28 410 8 250-18 410 4"/>
+    <path d="M0 824c120-20 230 18 360 6s240-22 380-8 270 24 420 8 280-16 440 2"/>
+    <path d="M0 918c170-24 280 18 430 4s260-24 430-8 280 20 450 6 250-14 290-8"/>
+  </g>
+  <g fill="#1d5b63" opacity=".68">
+    <path d="M300 528c30-66 90-68 128-8 28-32 70-18 78 18H300Z"/>
+    <path d="M1080 544c22-50 72-52 100-6 22-24 56-14 64 14h-164Z"/>
+  </g>
+  <g stroke="#245d63" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7">
+    <path d="M170 212c16-14 32-14 48 0M210 196c12-10 24-10 36 0"/>
+    <path d="M980 142c14-12 28-12 42 0M1014 130c10-9 20-9 30 0"/>
+    <path d="M1420 318c12-10 24-10 36 0"/>
+  </g>
+  <g fill="#ffffff" opacity=".86">
+    <path d="M1180 872c16-16 42-16 58 0l-29 20Z"/>
+    <path d="M1270 912c12-12 30-12 42 0l-21 15Z"/>
+  </g>
+  <path d="M0 1000V942c210-26 360 20 550 10s330-30 550-12 340 18 500-4v64Z" fill="#0d5f6e" opacity=".7"/>
+</svg>

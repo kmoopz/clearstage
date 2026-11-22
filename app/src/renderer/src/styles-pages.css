@@ -92,6 +92,8 @@
 .theme-card:hover { border-color: var(--line-strong); }
 .theme-card.is-active { border-color: var(--accent-line); background: var(--accent-soft); }
 .theme-preview { position: relative; height: 54px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.theme-preview.has-art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.35)); pointer-events: none; }
+.theme-preview.has-art i { opacity: .82; backdrop-filter: blur(3px); }
 .theme-preview i { position: absolute; top: 6px; left: 6px; width: 31%; height: 32px; border-radius: 3px; }
 .theme-preview b { position: absolute; right: 8px; bottom: 9px; width: 34%; height: 5px; border-radius: 99px; }
 .theme-preview em { position: absolute; right: 8px; bottom: 19px; width: 22%; height: 3px; border-radius: 99px; opacity: .5; }

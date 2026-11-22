@@ -93,7 +93,6 @@ function publicSite() {
     fs.writeFileSync(filePath, html)
   }
   fs.writeFileSync(path.join(out, '.nojekyll'), '')
-  fs.writeFileSync(path.join(out, 'README.md'), `# 澄幕 ClearStage · 官网\n\n这是澄幕的公开下载站点，源码不在此仓库分发。\n\n- 官网：https://${owner}.github.io/${repo}/\n- Windows 安装包与便携包：见 [Releases](https://github.com/${owner}/${repo}/releases/latest)\n- B 站登录：扫码登录；扫码状态不更新时，可在设置页粘贴浏览器 Cookie（SESSDATA + bili_jct）。\n- 代码签名：0.1.0 使用 ClearStage 本地自签名证书。安装程序内置证书并自动导入；便携包包含证书和 \`Install-Certificate.cmd\`，无需二次下载。首次运行自签名安装包仍可能提示未知发布者。\n\n本仓库只包含官网静态文件与公开证书，不包含应用源码或用户数据。\n`)
   return out
 }
 
@@ -178,7 +177,7 @@ async function publishRelease() {
   try {
     release = await request('GET', `${api}/repos/${owner}/${repo}/releases/tags/${tag}`)
     release = await request('PATCH', `${api}/repos/${owner}/${repo}/releases/${release.id}`, {
-      body: '澄幕 ClearStage 0.1.0 Windows 公测版。安装包内置 ClearStage 代码签名证书并在安装时自动导入；便携包包含证书和 Install-Certificate.cmd，无需二次下载。首次运行自签名安装包仍可能提示未知发布者，这是自签名证书在安装前尚未受信任导致的。'
+      body: '澄幕 ClearStage 0.1.0 Windows / Linux / macOS 公测版。Windows 安装包内置 ClearStage 代码签名证书并在安装时自动导入；便携包包含证书和 Install-Certificate.cmd，无需二次下载。macOS 为 ad-hoc 签名、未公证；Linux AppImage 未签名。首次运行 Windows 自签名安装包仍可能提示未知发布者，这是证书在安装程序启动前尚未受信任导致的。'
     })
   } catch (error) {
     if (error.status !== 404) throw error
@@ -186,7 +185,7 @@ async function publishRelease() {
       tag_name: tag,
       target_commitish: 'main',
       name: 'ClearStage 0.1.0',
-      body: '澄幕 ClearStage 0.1.0 Windows 公测版。安装包内置 ClearStage 代码签名证书并在安装时自动导入；便携包包含证书和 Install-Certificate.cmd，无需二次下载。首次运行自签名安装包仍可能提示未知发布者，这是自签名证书在安装前尚未受信任导致的。',
+      body: '澄幕 ClearStage 0.1.0 Windows / Linux / macOS 公测版。Windows 安装包内置 ClearStage 代码签名证书并在安装时自动导入；便携包包含证书和 Install-Certificate.cmd，无需二次下载。macOS 为 ad-hoc 签名、未公证；Linux AppImage 未签名。首次运行 Windows 自签名安装包仍可能提示未知发布者，这是证书在安装程序启动前尚未受信任导致的。',
       draft: false,
       prerelease: false
     })

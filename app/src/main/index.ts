@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, session, shell } from 'electron'
 import fs from 'node:fs'
 import path from 'node:path'
 import { Store } from './store'
@@ -37,6 +37,19 @@ if (!gotLock) {
   })
 
   app.whenReady().then(async () => {
+    // Bilibili image CDNs (covers, dynamic photos and emoji) expect a browser
+    // referer. Add it only for image requests from Bilibili hosts.
+    session.defaultSession.webRequest.onBeforeSendHeaders(
+      { urls: ['https://*.hdslb.com/*', 'https://*.bilibili.com/*'] },
+      (details, callback) => {
+        if (details.resourceType === 'image') {
+          details.requestHeaders.Referer = 'https://www.bilibili.com/'
+          details.requestHeaders['User-Agent'] =
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'
+        }
+        callback({ requestHeaders: details.requestHeaders })
+      }
+    )
     const store = new Store(dataDir)
     const proxy = new MediaProxy()
     await proxy.start()

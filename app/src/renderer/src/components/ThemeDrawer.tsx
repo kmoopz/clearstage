@@ -54,9 +54,12 @@ export function ThemeDrawer() {
                   onClick={() => void updateSettings({ themeId: theme.id, accent: theme.accent })}
                 >
                   <span
-                    className="theme-preview"
+                    className={`theme-preview ${theme.art ? 'has-art' : ''}`}
                     style={{
                       background: theme.bg,
+                      backgroundImage: theme.art ? `url(${theme.art})` : undefined,
+                      backgroundSize: 'cover',
+                      backgroundPosition: theme.artPosition ?? 'center',
                       color: theme.text,
                       borderColor: theme.line
                     }}
