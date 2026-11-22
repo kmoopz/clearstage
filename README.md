@@ -117,4 +117,4 @@ app/
 
 - `cd app && npm run typecheck && npm test`
 - Windows 安装包与主程序可用 `Get-AuthenticodeSignature` / `signtool verify /pa` 检查；公开证书在 `downloads/ClearStage-CodeSigning.cer`。
-- 发布资产 SHA-256 见官网下载页与 Release 说明：Windows 安装包 `c012b3a6…`、Windows 便携包 `bbcefed1…`、Linux AppImage `f642fe09…`、macOS arm64 `c94f84c7…`、macOS x64 `c5329560…`。
+- 发布资产 SHA-256 见官网下载页与 Release 说明：Windows 安装包 `0d43e72e…`、Windows 便携包 `256b8b08…`、Linux AppImage `9a790729…`、macOS arm64 `98327058…`、macOS x64 `1c4f6d2a…`。
