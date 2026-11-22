@@ -50,7 +50,10 @@ const FALLBACK_SETTINGS: AppSettings = {
     auddToken: '',
     acrHost: '',
     acrAccessKey: '',
-    acrAccessSecret: ''
+    acrAccessSecret: '',
+    acoustidClientKey: '',
+    fpcalcPath: '',
+    songrecPath: ''
   }
 }
 

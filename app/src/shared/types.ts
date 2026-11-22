@@ -192,18 +192,21 @@ export interface Song {
   startedAt: number
   endedAt?: number
   filePath?: string
-  provider: 'audd' | 'acrcloud' | 'manual'
+  provider: 'audd' | 'acrcloud' | 'acoustid' | 'songrec' | 'manual'
   confidence?: number
   cover?: string
 }
 
 export interface SongRecognitionSettings {
   enabled: boolean
-  provider: 'none' | 'audd' | 'acrcloud'
+  provider: 'none' | 'audd' | 'acrcloud' | 'acoustid' | 'songrec'
   auddToken: string
   acrHost: string
   acrAccessKey: string
   acrAccessSecret: string
+  acoustidClientKey: string
+  fpcalcPath: string
+  songrecPath: string
 }
 
 export interface DanmakuSettings {

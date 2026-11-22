@@ -1,10 +1,15 @@
 import crypto from 'node:crypto'
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
+import { execFile, execFileSync } from 'node:child_process'
+import { promisify } from 'node:util'
 import type { AppSettings, Recording, Room, Song } from '../../shared/types'
 import type { Store } from '../store'
 import type { Ffmpeg } from './ffmpeg'
 import type { RecordingManager } from './recorder'
+
+const execFileAsync = promisify(execFile)
 
 interface Recognition {
   title: string
@@ -139,6 +144,14 @@ export class SongCaptureService {
 
   private async recognize(settings: AppSettings, audio: Buffer): Promise<Recognition | null> {
     const config = settings.songRecognition
+    if (config.provider === 'acoustid') {
+      const result = await this.recognizeAcoustId(config, audio)
+      return result
+    }
+    if (config.provider === 'songrec') {
+      const result = await this.recognizeSongRec(config, audio)
+      return result
+    }
     if (config.provider === 'audd') {
       if (!config.auddToken) return null
       const form = new FormData()
@@ -222,6 +235,189 @@ export class SongCaptureService {
     return null
   }
 
+  private tempWav(audio: Buffer, name: string): { dir: string; file: string } {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'clearstage-song-'))
+    const file = path.join(dir, name)
+    fs.writeFileSync(file, audio)
+    return { dir, file }
+  }
+
+  private resolveFpcalc(configured: string): string | null {
+    const candidates = [
+      configured.trim(),
+      path.join(process.resourcesPath, 'fpcalc.exe'),
+      'C:\\ffmpeg\\bin\\fpcalc.exe',
+      '/usr/local/bin/fpcalc',
+      '/opt/homebrew/bin/fpcalc',
+      '/usr/bin/fpcalc'
+    ].filter(Boolean)
+    for (const candidate of candidates) {
+      if (candidate.includes(path.sep) && fs.existsSync(candidate)) return candidate
+    }
+    try {
+      const command = process.platform === 'win32' ? 'where.exe' : 'which'
+      const result = execFileSync(command, ['fpcalc'], {
+        timeout: 5000,
+        encoding: 'utf8'
+      }) as string
+      return result.split(/\r?\n/).map((line) => line.trim()).find(Boolean) ?? null
+    } catch {
+      return null
+    }
+  }
+
+  private resolveSongRec(configured: string): string | null {
+    const candidates = [
+      configured.trim(),
+      path.join(process.resourcesPath, 'SongRec.exe'),
+      'C:\\Tools\\SongRec\\SongRec.exe',
+      'C:\\ffmpeg\\bin\\SongRec.exe'
+    ].filter(Boolean)
+    for (const candidate of candidates) {
+      if (candidate.includes(path.sep) && fs.existsSync(candidate)) return candidate
+    }
+    try {
+      const command = process.platform === 'win32' ? 'where.exe' : 'which'
+      const result = execFileSync(command, ['songrec'], {
+        timeout: 5000,
+        encoding: 'utf8'
+      }) as string
+      return result.split(/\r?\n/).map((line) => line.trim()).find(Boolean) ?? null
+    } catch {
+      return null
+    }
+  }
+
+  private async recognizeAcoustId(
+    config: AppSettings['songRecognition'],
+    audio: Buffer
+  ): Promise<Recognition | null> {
+    if (!config.acoustidClientKey.trim()) return null
+    const fpcalc = this.resolveFpcalc(config.fpcalcPath)
+    if (!fpcalc) return null
+    const temp = this.tempWav(audio, 'sample.wav')
+    try {
+      const { stdout } = await execFileAsync(fpcalc, ['-json', '-length', '12', temp.file], {
+        timeout: 20_000,
+        maxBuffer: 4 * 1024 * 1024
+      })
+      const finger = JSON.parse(stdout) as { duration?: number; fingerprint?: string }
+      if (!finger.fingerprint) return null
+      const body = [
+        `client=${encodeURIComponent(config.acoustidClientKey.trim())}`,
+        'format=json',
+        `duration=${Math.round(Number(finger.duration) || 8)}`,
+        `fingerprint=${encodeURIComponent(finger.fingerprint)}`,
+        'meta=recordings+releasegroups+compress'
+      ].join('&')
+      const response = await fetch('https://api.acoustid.org/v2/lookup', {
+        method: 'POST',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body,
+        signal: AbortSignal.timeout(20_000)
+      })
+      const json = (await response.json()) as {
+        status?: string
+        error?: { message?: string }
+        results?: Array<{
+          score?: number
+          recordings?: Array<{
+            id?: string
+            title?: string
+            artists?: Array<{ name?: string }>
+            releasegroups?: Array<{ title?: string }>
+          }>
+        }>
+      }
+      if (json.status !== 'ok') throw new Error(json.error?.message || 'AcoustID 查询失败')
+      const candidates = (json.results ?? [])
+        .flatMap((result) => (result.recordings ?? []).map((recording) => ({ result, recording })))
+        .filter((item) => item.recording.title && (item.result.score ?? 0) >= 0.35)
+        .sort((a, b) => (b.result.score ?? 0) - (a.result.score ?? 0))
+      const best = candidates[0]
+      if (!best) return null
+      return {
+        title: best.recording.title!,
+        artist: best.recording.artists?.map((artist) => artist.name).filter(Boolean).join(' / ') || '未知歌手',
+        album: best.recording.releasegroups?.[0]?.title,
+        confidence: best.result.score
+      }
+    } finally {
+      fs.rmSync(temp.dir, { recursive: true, force: true })
+    }
+  }
+
+  private async recognizeSongRec(
+    config: AppSettings['songRecognition'],
+    audio: Buffer
+  ): Promise<Recognition | null> {
+    const executable = this.resolveSongRec(config.songrecPath)
+    if (!executable) return null
+    const temp = this.tempWav(audio, 'sample.wav')
+    try {
+      let stdout = ''
+      try {
+        const result = await execFileAsync(executable, ['recognize', '--json', temp.file], {
+          timeout: 30_000,
+          maxBuffer: 4 * 1024 * 1024
+        })
+        stdout = result.stdout
+      } catch (firstError) {
+        const fallback = await execFileAsync(executable, ['recognize', temp.file], {
+          timeout: 30_000,
+          maxBuffer: 4 * 1024 * 1024
+        })
+        stdout = fallback.stdout
+      }
+      const parsed = this.parseSongRecOutput(stdout)
+      if (!parsed?.title) return null
+      return {
+        title: parsed.title,
+        artist: parsed.artist || '未知歌手',
+        album: parsed.album,
+        confidence: parsed.confidence
+      }
+    } finally {
+      fs.rmSync(temp.dir, { recursive: true, force: true })
+    }
+  }
+
+  private parseSongRecOutput(output: string): { title: string; artist?: string; album?: string; confidence?: number } | null {
+    const text = output.trim()
+    if (!text) return null
+    const start = Math.min(
+      ...[text.indexOf('{'), text.indexOf('[')].filter((index) => index >= 0)
+    )
+    if (Number.isFinite(start)) {
+      try {
+        const parsed = JSON.parse(text.slice(start)) as Record<string, unknown>
+        const record = (Array.isArray(parsed) ? parsed[0] : parsed) as Record<string, unknown> | undefined
+        if (record) {
+          const nested = (record.track ?? record.song ?? record.result) as Record<string, unknown> | undefined
+          const source = nested ?? record
+          const title = source.title ?? source.name
+          if (typeof title === 'string') {
+            const artist = source.artist ?? source.artistName
+            const album = source.album ?? source.albumName
+            return {
+              title,
+              artist: typeof artist === 'string' ? artist : undefined,
+              album: typeof album === 'string' ? album : undefined,
+              confidence: typeof source.score === 'number' ? source.score : undefined
+            }
+          }
+        }
+      } catch {
+        // Fall through to the text parser below.
+      }
+    }
+    const title = output.match(/Title:\s*(.+)/i)?.[1]?.trim()
+    const artist = output.match(/Artist:\s*(.+)/i)?.[1]?.trim()
+    const album = output.match(/Album:\s*(.+)/i)?.[1]?.trim()
+    if (!title) return null
+    return { title, artist, album }
+  }
+
   private async finalizeCurrent(session: SongSession, endSec: number): Promise<void> {
     const current = session.current
     if (!current) return
@@ -245,7 +441,10 @@ export class SongCaptureService {
         startedAt: session.recording.startedAt + current.startSec * 1000,
         endedAt: session.recording.startedAt + endSec * 1000,
         filePath: result.filePath,
-        provider: this.settingsProvider().songRecognition.provider === 'acrcloud' ? 'acrcloud' : 'audd',
+        provider: (() => {
+          const active = this.settingsProvider().songRecognition.provider
+          return active === 'none' ? 'manual' : active
+        })(),
         confidence: current.confidence
       }
       this.store.upsertSong(song)

@@ -486,7 +486,15 @@ export function RecordingsView() {
                   <small>{dayLabel(song.startedAt)}</small>
                 </div>
                 <span className={`provider-chip ${song.provider}`}>
-                  {song.provider === 'manual' ? '手动标记' : song.provider === 'acrcloud' ? 'ACRCloud' : 'AudD'}
+                  {song.provider === 'manual'
+                    ? '手动标记'
+                    : song.provider === 'acrcloud'
+                      ? 'ACRCloud'
+                      : song.provider === 'acoustid'
+                        ? 'AcoustID'
+                        : song.provider === 'songrec'
+                          ? 'SongRec'
+                          : 'AudD'}
                   {song.confidence ? ` ${Math.round(song.confidence)}%` : ''}
                 </span>
                 <span className="song-duration">

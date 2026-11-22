@@ -270,6 +270,8 @@
 .provider-chip { padding: 3px 6px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); font-family: var(--font-mono); font-size: 6.5px; white-space: nowrap; }
 .provider-chip.acrcloud { color: var(--accent); border-color: var(--accent-line); }
 .provider-chip.audd { color: var(--blue); border-color: rgba(139,199,255,.18); }
+.provider-chip.acoustid { color: var(--accent); border-color: var(--accent-line); }
+.provider-chip.songrec { color: var(--warm); border-color: rgba(255,191,122,.2); }
 .song-duration { width: 40px; color: var(--muted); font-family: var(--font-mono); font-size: 7px; text-align: right; }
 .song-actions { display: flex; gap: 3px; }
 .song-actions button { display: flex; padding: 4px; color: var(--muted); }

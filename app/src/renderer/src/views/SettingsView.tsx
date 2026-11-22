@@ -378,7 +378,7 @@ export function SettingsView() {
               </div>
               <div className="settings-card">
                 <div className="settings-row">
-                  <div><b>启用歌曲捕获</b><p>需要 FFmpeg 与第三方识别服务。会产生少量 API 调用费用。</p></div>
+                  <div><b>启用歌曲捕获</b><p>需要 FFmpeg 与识别服务。AcoustID 与 SongRec 方案本身免费，不需要按次付费。</p></div>
                   <button
                     className={`switch ${songForm.enabled ? 'is-on' : ''}`}
                     onClick={() => setSongForm({ ...songForm, enabled: !songForm.enabled })}
@@ -396,10 +396,74 @@ export function SettingsView() {
                     }
                   >
                     <option value="none">不启用自动识别</option>
+                    <option value="acoustid">AcoustID（免费 API Key）</option>
+                    <option value="songrec">SongRec（免费外部程序）</option>
                     <option value="audd">AudD</option>
                     <option value="acrcloud">ACRCloud</option>
                   </select>
                 </div>
+                {songForm.provider === 'acoustid' && (
+                  <>
+                    <div className="settings-row vertical">
+                      <div><b>AcoustID Client API Key</b><p>在 acoustid.org/api-key 免费注册获取；仅标识应用，不产生费用。</p></div>
+                      <div className="input-with-action">
+                        <input
+                          type="password"
+                          value={songForm.acoustidClientKey}
+                          onChange={(event) => setSongForm({ ...songForm, acoustidClientKey: event.target.value })}
+                          placeholder="AcoustID application API key"
+                          spellCheck={false}
+                        />
+                        <button
+                          type="button"
+                          className="mini-action"
+                          onClick={() => void window.clearstage.app.openExternal('https://acoustid.org/api-key')}
+                        >
+                          获取 Key
+                        </button>
+                      </div>
+                    </div>
+                    <div className="settings-row vertical">
+                      <div><b>fpcalc 路径（可选）</b><p>留空会自动查找 PATH、C:\ffmpeg\bin\fpcalc.exe；需要 Chromaprint fpcalc。</p></div>
+                      <input
+                        value={songForm.fpcalcPath}
+                        onChange={(event) => setSongForm({ ...songForm, fpcalcPath: event.target.value })}
+                        placeholder="C:\ffmpeg\bin\fpcalc.exe"
+                        spellCheck={false}
+                      />
+                    </div>
+                    <div className="settings-note">
+                      <Info size={14} />
+                      AcoustID 通过 Chromaprint 音频指纹查询 MusicBrainz；冷门歌、现场版与 Remix 可能识别不到。
+                    </div>
+                  </>
+                )}
+                {songForm.provider === 'songrec' && (
+                  <>
+                    <div className="settings-row vertical">
+                      <div><b>SongRec 可执行文件</b><p>免费开源 Shazam 客户端。下载后填写 SongRec.exe 路径，识别无需 API Key。</p></div>
+                      <div className="input-with-action">
+                        <input
+                          value={songForm.songrecPath}
+                          onChange={(event) => setSongForm({ ...songForm, songrecPath: event.target.value })}
+                          placeholder="C:\Tools\SongRec\SongRec.exe"
+                          spellCheck={false}
+                        />
+                        <button
+                          type="button"
+                          className="mini-action"
+                          onClick={() => void window.clearstage.app.openExternal('https://github.com/marin-m/SongRec/releases')}
+                        >
+                          下载
+                        </button>
+                      </div>
+                    </div>
+                    <div className="settings-note">
+                      <Info size={14} />
+                      SongRec 使用非官方 Shazam 接口，可能随服务变化失效；作为个人可选外部识别器，不随澄幕打包。
+                    </div>
+                  </>
+                )}
                 {songForm.provider === 'audd' && (
                   <div className="settings-row vertical">
                     <div><b>AudD API Token</b><p>在 audd.io 注册后获取。</p></div>

@@ -65,7 +65,10 @@ export function defaultSettings(): AppSettings {
       auddToken: '',
       acrHost: '',
       acrAccessKey: '',
-      acrAccessSecret: ''
+      acrAccessSecret: '',
+      acoustidClientKey: '',
+      fpcalcPath: '',
+      songrecPath: ''
     }
   }
 }
