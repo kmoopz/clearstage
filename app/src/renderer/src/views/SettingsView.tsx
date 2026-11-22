@@ -275,6 +275,23 @@ export function SettingsView() {
                   </div>
                 </div>
                 <div className="settings-row">
+                  <div><b>启动页面</b><p>应用启动时默认打开哪个板块，也可以随时用 Ctrl+K 快速切换。</p></div>
+                  <select
+                    value={settings.startupPage ?? 'live'}
+                    onChange={(event) =>
+                      void updateSettings({
+                        startupPage: event.target.value as 'live' | 'recordings' | 'stats' | 'feeds' | 'settings'
+                      })
+                    }
+                  >
+                    <option value="live">直播台</option>
+                    <option value="recordings">录制库</option>
+                    <option value="stats">主播数据</option>
+                    <option value="feeds">动态与投稿</option>
+                    <option value="settings">设置</option>
+                  </select>
+                </div>
+                <div className="settings-row">
                   <div><b>弹幕字号</b><p>画面内弹幕层的字号，聊天面板不受影响。</p></div>
                   <div className="inline-range">
                     <input

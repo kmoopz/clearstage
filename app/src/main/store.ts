@@ -56,6 +56,7 @@ export function defaultSettings(): AppSettings {
     layout: '4',
     videoFit: 'cover',
     multiViewQuality: 'auto',
+    startupPage: 'live',
     autoReconnect: true,
     notifications: true,
     danmaku: { ...DEFAULT_DANMAKU },

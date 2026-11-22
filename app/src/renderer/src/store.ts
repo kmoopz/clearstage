@@ -41,6 +41,7 @@ const FALLBACK_SETTINGS: AppSettings = {
   layout: '4',
   videoFit: 'cover',
   multiViewQuality: 'auto',
+  startupPage: 'live',
   autoReconnect: true,
   notifications: true,
   danmaku: { fontSize: 16, opacity: 0.92, showGifts: true, showEnter: false, area: 72 },
@@ -73,7 +74,9 @@ interface AppState {
   toasts: Toast[]
   addRoomOpen: boolean
   themeOpen: boolean
+  commandOpen: boolean
   chatOpen: boolean
+  focusedRoomId: string | null
   libraryLoaded: boolean
   recordingBusy: Record<string, boolean>
 
@@ -81,9 +84,12 @@ interface AppState {
   setPage(page: Page): void
   setAddRoomOpen(open: boolean): void
   setThemeOpen(open: boolean): void
+  setCommandOpen(open: boolean): void
   setChatOpen(open: boolean): void
   setSelected(roomId: string): void
+  setFocusedRoom(roomId: string | null): void
   setActiveRooms(ids: string[]): void
+  reorderActive(sourceId: string, targetId: string): void
   setLayout(layout: string): Promise<void>
   toggleRoom(roomId: string): void
   addRoom(input: { url: string; platform?: string; directUrl?: string; headers?: { referer?: string; userAgent?: string }; title?: string; streamer?: string }): Promise<void>
@@ -112,6 +118,17 @@ function initialPage(): Page {
   const raw = window.location.hash.replace(/^#\/?/, '').split('?')[0]
   const valid: Page[] = ['live', 'recordings', 'stats', 'feeds', 'settings']
   return valid.includes(raw as Page) ? (raw as Page) : 'live'
+}
+
+function hashPage(): Page | null {
+  const raw = window.location.hash.replace(/^#\/?/, '').split('?')[0]
+  const valid: Page[] = ['live', 'recordings', 'stats', 'feeds', 'settings']
+  return valid.includes(raw as Page) ? (raw as Page) : null
+}
+
+function startupPage(settings: AppSettings): Page {
+  const valid: Page[] = ['live', 'recordings', 'stats', 'feeds', 'settings']
+  return valid.includes(settings.startupPage) ? settings.startupPage : 'live'
 }
 
 const ACTIVE_ROOMS_KEY = 'clearstage.activeRoomIds'
@@ -154,7 +171,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   toasts: [],
   addRoomOpen: false,
   themeOpen: false,
+  commandOpen: false,
   chatOpen: true,
+  focusedRoomId: null,
   libraryLoaded: false,
   recordingBusy: {},
 
@@ -173,6 +192,7 @@ export const useAppStore = create<AppState>((set, get) => ({
           rooms: DEMO_ROOMS,
           activeIds: DEMO_ROOMS.map((room) => room.id),
           selectedId: DEMO_ROOMS[0].id,
+          page: hashPage() ?? startupPage(settings),
           recordings: DEMO_RECORDINGS,
           clips: DEMO_CLIPS,
           songs: DEMO_SONGS,
@@ -200,7 +220,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         rooms,
         activeIds: opening,
         selectedId: opening[0] ?? null,
-        page: initialPage()
+        page: hashPage() ?? startupPage(settings)
       })
       void get().loadLibrary()
       void get().loadAuth()
@@ -228,15 +248,35 @@ export const useAppStore = create<AppState>((set, get) => ({
   setThemeOpen(open) {
     set({ themeOpen: open })
   },
+  setCommandOpen(open) {
+    set({ commandOpen: open })
+  },
   setChatOpen(open) {
     set({ chatOpen: open })
   },
   setSelected(roomId) {
     set({ selectedId: roomId })
   },
+  setFocusedRoom(roomId) {
+    if (roomId && !get().activeIds.includes(roomId)) return
+    set({ focusedRoomId: roomId })
+  },
+  reorderActive(sourceId, targetId) {
+    if (sourceId === targetId) return
+    const activeIds = [...get().activeIds]
+    const from = activeIds.indexOf(sourceId)
+    const to = activeIds.indexOf(targetId)
+    if (from < 0 || to < 0) return
+    const [moved] = activeIds.splice(from, 1)
+    activeIds.splice(to, 0, moved)
+    set({ activeIds })
+    persistActiveIds(activeIds)
+    void window.clearstage.rooms.setActive(activeIds)
+  },
   setActiveRooms(ids) {
     const activeIds = ids.filter((id) => get().rooms.some((room) => room.id === id)).slice(0, 9)
-    set({ activeIds })
+    const focusedRoomId = get().focusedRoomId && activeIds.includes(get().focusedRoomId!) ? get().focusedRoomId : null
+    set({ activeIds, focusedRoomId })
     persistActiveIds(activeIds)
     void window.clearstage.rooms.setActive(activeIds)
   },
@@ -256,7 +296,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       persistActiveIds(next)
       set({
         activeIds: next,
-        selectedId: get().selectedId === roomId ? (next[0] ?? null) : get().selectedId
+        selectedId: get().selectedId === roomId ? (next[0] ?? null) : get().selectedId,
+        focusedRoomId: get().focusedRoomId === roomId ? null : get().focusedRoomId
       })
       void window.clearstage.rooms.setActive(next)
       return
@@ -315,7 +356,8 @@ export const useAppStore = create<AppState>((set, get) => ({
         return {
           rooms,
           activeIds,
-          selectedId: state.selectedId === roomId ? (activeIds[0] ?? null) : state.selectedId
+          selectedId: state.selectedId === roomId ? (activeIds[0] ?? null) : state.selectedId,
+          focusedRoomId: state.focusedRoomId === roomId ? null : state.focusedRoomId
         }
       })
       void window.clearstage.rooms.setActive(get().activeIds)

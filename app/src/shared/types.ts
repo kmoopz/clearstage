@@ -214,6 +214,8 @@ export interface DanmakuSettings {
   area: number
 }
 
+export type AppPage = 'live' | 'recordings' | 'stats' | 'feeds' | 'settings'
+
 export interface AppSettings {
   themeId: string
   accent: string
@@ -224,6 +226,7 @@ export interface AppSettings {
   layout: string
   videoFit: 'cover' | 'contain'
   multiViewQuality: 'auto' | 'high'
+  startupPage: AppPage
   autoReconnect: boolean
   notifications: boolean
   danmaku: DanmakuSettings

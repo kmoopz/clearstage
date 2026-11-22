@@ -5,6 +5,7 @@ import { TitleBar } from './components/TitleBar'
 import { Sidebar } from './components/Sidebar'
 import { Toasts } from './components/Toasts'
 import { AddRoomModal } from './components/AddRoomModal'
+import { CommandPalette } from './components/CommandPalette'
 import { ThemeDrawer } from './components/ThemeDrawer'
 import { LiveView } from './views/LiveView'
 import { RecordingsView } from './views/RecordingsView'
@@ -77,6 +78,89 @@ export default function App() {
     if (workspace) workspace.scrollTo({ top: 0, behavior: 'smooth' })
   }, [page])
 
+  useEffect(() => {
+    const handler = (event: KeyboardEvent): void => {
+      const state = useAppStore.getState()
+      const target = event.target instanceof Element ? event.target : null
+      const typing = Boolean(target?.closest('input, textarea, select, [contenteditable="true"]'))
+      const mod = event.ctrlKey || event.metaKey
+      const key = event.key.toLowerCase()
+
+      if (mod && key === 'k') {
+        event.preventDefault()
+        state.setCommandOpen(!state.commandOpen)
+        return
+      }
+
+      if (state.commandOpen) {
+        if (event.key === 'Escape') {
+          event.preventDefault()
+          state.setCommandOpen(false)
+        }
+        return
+      }
+
+      if (event.key === 'Escape' && state.focusedRoomId) {
+        state.setFocusedRoom(null)
+        return
+      }
+
+      if (event.key === 'F5') {
+        event.preventDefault()
+        window.dispatchEvent(
+          new CustomEvent('clearstage:refresh-room', { detail: { roomId: state.selectedId ?? 'all' } })
+        )
+        return
+      }
+
+      if (typing) return
+
+      if (event.key === '?') {
+        event.preventDefault()
+        state.setCommandOpen(true)
+        return
+      }
+
+      if (!mod) return
+
+      if (/^[1-5]$/.test(event.key)) {
+        event.preventDefault()
+        const pages = ['live', 'recordings', 'stats', 'feeds', 'settings'] as const
+        state.setPage(pages[Number(event.key) - 1])
+        return
+      }
+
+      if (event.shiftKey && key === 'l') {
+        event.preventDefault()
+        const order = ['1', '2', '4', '6', '9']
+        const current = state.settings.layout
+        const next = order[(order.indexOf(current) + 1) % order.length] ?? '4'
+        void state.setLayout(next)
+        return
+      }
+
+      if (event.shiftKey && key === 'm') {
+        event.preventDefault()
+        state.setChatOpen(!state.chatOpen)
+        return
+      }
+
+      if (event.shiftKey && key === 'f') {
+        event.preventDefault()
+        state.setPage('live')
+        state.setFocusedRoom(state.focusedRoomId ? null : state.selectedId)
+        return
+      }
+
+      if (event.shiftKey && key === 'a') {
+        event.preventDefault()
+        state.setAddRoomOpen(true)
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
+
   if (!booted) {
     return (
       <div className="boot-screen">
@@ -127,6 +211,7 @@ export default function App() {
         </main>
       </div>
       <AddRoomModal />
+      <CommandPalette />
       <ThemeDrawer />
       <Toasts />
       {info?.isDemo && (

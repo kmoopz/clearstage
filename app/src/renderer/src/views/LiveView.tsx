@@ -76,16 +76,19 @@ export function LiveView() {
   const setChatOpen = useAppStore((state) => state.setChatOpen)
   const recordings = useAppStore((state) => state.recordings)
   const selectedId = useAppStore((state) => state.selectedId)
+  const focusedRoomId = useAppStore((state) => state.focusedRoomId)
+  const setFocusedRoom = useAppStore((state) => state.setFocusedRoom)
+  const reorderActive = useAppStore((state) => state.reorderActive)
   const gridRef = useRef<HTMLDivElement>(null)
   const [gridSize, setGridSize] = useState({ width: 0, height: 0 })
-  const [focusId, setFocusId] = useState<string | null>(null)
+  const [dragId, setDragId] = useState<string | null>(null)
 
   const activeRooms = useMemo(
     () => activeIds.map((id) => rooms.find((room) => room.id === id)).filter((room): room is Room => Boolean(room)),
     [activeIds, rooms]
   )
   const capacity = Number(layout) || 4
-  const focusedRoom = focusId ? activeRooms.find((room) => room.id === focusId) : undefined
+  const focusedRoom = focusedRoomId ? activeRooms.find((room) => room.id === focusedRoomId) : undefined
   const displayRooms = focusedRoom ? [focusedRoom] : activeRooms
   const showAdd = !focusedRoom && displayRooms.length > 1 && displayRooms.length < Math.min(capacity, 9)
   const tileCount = displayRooms.length + (showAdd ? 1 : 0)
@@ -116,17 +119,17 @@ export function LiveView() {
   }, [displayRooms.length, chatOpen, focusedRoom])
 
   useEffect(() => {
-    if (focusId && !activeRooms.some((room) => room.id === focusId)) setFocusId(null)
-  }, [activeRooms, focusId])
+    if (focusedRoomId && !activeRooms.some((room) => room.id === focusedRoomId)) setFocusedRoom(null)
+  }, [activeRooms, focusedRoomId, setFocusedRoom])
 
   useEffect(() => {
-    if (!focusId) return
+    if (!focusedRoomId) return
     const onKeyDown = (event: KeyboardEvent): void => {
-      if (event.key === 'Escape') setFocusId(null)
+      if (event.key === 'Escape') setFocusedRoom(null)
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [focusId])
+  }, [focusedRoomId, setFocusedRoom])
 
   return (
     <section className="view live-view">
@@ -148,7 +151,7 @@ export function LiveView() {
             <button
               className={`btn btn-ghost btn-sm ${focusedRoom ? 'is-active' : ''}`}
               title={focusedRoom ? '返回多画面' : '只保留当前画面，减少解码压力'}
-              onClick={() => setFocusId(focusedRoom ? null : selectedId)}
+              onClick={() => setFocusedRoom(focusedRoom ? null : selectedId)}
               disabled={!focusedRoom && !selectedId}
             >
               {focusedRoom ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
@@ -239,7 +242,17 @@ export function LiveView() {
             style={gridStyle}
           >
             {displayRooms.map((room) => (
-              <PlayerTile key={room.id} room={room} focused={Boolean(focusedRoom)} />
+              <PlayerTile
+                key={room.id}
+                room={room}
+                focused={Boolean(focusedRoom)}
+                onDragStart={() => setDragId(room.id)}
+                onDragEnd={() => setDragId(null)}
+                onDropRoom={(sourceId) => {
+                  reorderActive(sourceId, room.id)
+                  setDragId(null)
+                }}
+              />
             ))}
             {showAdd && (
               <button className="add-tile" onClick={() => setAddRoomOpen(true)}>

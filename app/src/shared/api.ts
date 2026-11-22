@@ -38,6 +38,7 @@ export interface ClearStageApi {
     info(): Promise<AppInfo>
     openExternal(url: string): Promise<void>
     showItem(path: string): Promise<void>
+    readClipboard(): Promise<string>
   }
   window: {
     minimize(): Promise<void>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Minus, Square, X, Copy, Radio } from 'lucide-react'
+import { Minus, Square, X, Copy, Radio, Search } from 'lucide-react'
 import { BrandMark, BrandWordmark } from './Brand'
 import { useAppStore } from '../store'
 
@@ -15,6 +15,7 @@ export function TitleBar() {
   const page = useAppStore((state) => state.page)
   const info = useAppStore((state) => state.info)
   const activeIds = useAppStore((state) => state.activeIds)
+  const setCommandOpen = useAppStore((state) => state.setCommandOpen)
   const [maximized, setMaximized] = useState(false)
 
   useEffect(() => {
@@ -46,6 +47,11 @@ export function TitleBar() {
         </div>
       </div>
       <div className="titlebar-actions">
+        <button className="titlebar-command" onClick={() => setCommandOpen(true)} title="快捷命令（Ctrl+K）">
+          <Search size={13} />
+          <span>快捷命令</span>
+          <kbd>Ctrl K</kbd>
+        </button>
         <span className="titlebar-version">v{info?.version ?? '0.1.0'} · BETA</span>
         <button className="window-btn" aria-label="最小化" onClick={() => void window.clearstage.window.minimize()}>
           <Minus size={14} />

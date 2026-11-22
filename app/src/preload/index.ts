@@ -15,7 +15,8 @@ const api: ClearStageApi = {
   app: {
     info: () => ipcRenderer.invoke('app:info'),
     openExternal: (url: string) => ipcRenderer.invoke('app:open-external', url),
-    showItem: (path: string) => ipcRenderer.invoke('app:show-item', path)
+    showItem: (path: string) => ipcRenderer.invoke('app:show-item', path),
+    readClipboard: () => ipcRenderer.invoke('app:read-clipboard')
   },
   window: {
     minimize: () => ipcRenderer.invoke('window:minimize'),

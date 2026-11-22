@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog, ipcMain, shell } from 'electron'
+import { BrowserWindow, clipboard, dialog, ipcMain, shell } from 'electron'
 import fs from 'node:fs'
 import type { AddRoomInput, AppInfo, AppSettings, BiliCookieInput, RecordingStartOptions, Room } from '../shared/types'
 import type { Store } from './store'
@@ -64,6 +64,8 @@ export function registerIpc(context: IpcContext): void {
     if (!/^https?:\/\//.test(url)) throw new Error('只能打开 HTTP(S) 链接')
     await shell.openExternal(url)
   })
+
+  ipcMain.handle('app:read-clipboard', () => clipboard.readText())
 
   ipcMain.handle('app:show-item', async (_event, target: string) => {
     if (!target || !fs.existsSync(target)) throw new Error('文件不存在')

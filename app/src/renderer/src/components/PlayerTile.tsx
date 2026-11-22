@@ -7,9 +7,11 @@ import {
   CaptionsOff,
   CircleStop,
   Expand,
+  GripVertical,
   Loader2,
   MessageSquare,
   Pause,
+  PictureInPicture2,
   Play,
   Radio,
   RefreshCw,
@@ -43,7 +45,19 @@ const EMPTY_MESSAGES: ChatMessage[] = []
 
 const OVERLAY_POSITIONS = [14, 33, 53, 71]
 
-export function PlayerTile({ room, focused = false }: { room: Room; focused?: boolean }) {
+export function PlayerTile({
+  room,
+  focused = false,
+  onDragStart,
+  onDragEnd,
+  onDropRoom
+}: {
+  room: Room
+  focused?: boolean
+  onDragStart?: () => void
+  onDragEnd?: () => void
+  onDropRoom?: (sourceRoomId: string) => void
+}) {
   const selectedId = useAppStore((state) => state.selectedId)
   const setSelected = useAppStore((state) => state.setSelected)
   const setChatOpen = useAppStore((state) => state.setChatOpen)
@@ -72,6 +86,8 @@ export function PlayerTile({ room, focused = false }: { room: Room; focused?: bo
   const [volume, setVolume] = useState(0.72)
   const [danmakuOn, setDanmakuOn] = useState(true)
   const [fullscreen, setFullscreen] = useState(false)
+  const [pip, setPip] = useState(false)
+  const [dragOver, setDragOver] = useState(false)
   const [showStats, setShowStats] = useState(false)
   const [videoMeta, setVideoMeta] = useState({ width: 0, height: 0 })
   const [bufferSeconds, setBufferSeconds] = useState(0)
@@ -315,10 +331,28 @@ export function PlayerTile({ room, focused = false }: { room: Room; focused?: bo
   }, [room.id, room.isDemo, info])
 
   useEffect(() => {
-    const handler = (): void => setFullscreen(document.fullscreenElement === stageRef.current)
-    document.addEventListener('fullscreenchange', handler)
-    return () => document.removeEventListener('fullscreenchange', handler)
-  }, [])
+    const video = videoRef.current
+    if (!video) return
+    const onEnter = (): void => setPip(true)
+    const onLeave = (): void => setPip(false)
+    video.addEventListener('enterpictureinpicture', onEnter)
+    video.addEventListener('leavepictureinpicture', onLeave)
+    return () => {
+      video.removeEventListener('enterpictureinpicture', onEnter)
+      video.removeEventListener('leavepictureinpicture', onLeave)
+    }
+  }, [room.id])
+
+  useEffect(() => {
+    const handler = (event: Event): void => {
+      const roomId = (event as CustomEvent<{ roomId?: string }>).detail?.roomId
+      if (roomId && roomId !== 'all' && roomId !== room.id) return
+      setRetryKey((value) => value + 1)
+      void refreshRoom(room.id)
+    }
+    window.addEventListener('clearstage:refresh-room', handler)
+    return () => window.removeEventListener('clearstage:refresh-room', handler)
+  }, [room.id, refreshRoom])
 
   function togglePlay() {
     const video = videoRef.current
@@ -350,6 +384,30 @@ export function PlayerTile({ room, focused = false }: { room: Room; focused?: bo
     []
   )
 
+  useEffect(() => {
+    const handler = (): void => setFullscreen(document.fullscreenElement === stageRef.current)
+    document.addEventListener('fullscreenchange', handler)
+    return () => document.removeEventListener('fullscreenchange', handler)
+  }, [])
+
+  async function togglePip() {
+    const video = videoRef.current
+    if (!video || room.isDemo || !document.pictureInPictureEnabled) return
+    try {
+      if (document.pictureInPictureElement) await document.exitPictureInPicture()
+      else await video.requestPictureInPicture()
+    } catch {
+      toast('warning', '无法进入画中画', '当前系统或视频状态不支持画中画。')
+    }
+  }
+
+  function handleDrop(event: React.DragEvent<HTMLElement>): void {
+    event.preventDefault()
+    setDragOver(false)
+    const sourceId = event.dataTransfer.getData('text/plain')
+    if (sourceId && sourceId !== room.id) onDropRoom?.(sourceId)
+  }
+
   async function toggleFullscreen() {
     if (!stageRef.current) return
     if (document.fullscreenElement) await document.exitFullscreen()
@@ -379,8 +437,16 @@ export function PlayerTile({ room, focused = false }: { room: Room; focused?: bo
 
   return (
     <article
-      className={`player-tile ${selected ? 'is-selected' : ''} ${fullscreen ? 'is-fullscreen' : ''}`}
+      className={`player-tile ${selected ? 'is-selected' : ''} ${fullscreen ? 'is-fullscreen' : ''} ${dragOver ? 'is-drop-target' : ''}`}
       onClick={() => setSelected(room.id)}
+      onDragOver={(event) => {
+        if (!onDropRoom) return
+        event.preventDefault()
+        event.dataTransfer.dropEffect = 'move'
+        setDragOver(true)
+      }}
+      onDragLeave={() => setDragOver(false)}
+      onDrop={handleDrop}
     >
       <div className="player-stage" ref={stageRef}>
         <video
@@ -440,6 +506,23 @@ export function PlayerTile({ room, focused = false }: { room: Room; focused?: bo
             </span>
           </div>
           <div className="player-actions">
+            {onDragStart && (
+              <button
+                className="glass-btn drag-handle"
+                title="拖动排序"
+                draggable
+                onClick={(event) => event.stopPropagation()}
+                onDragStart={(event) => {
+                  event.stopPropagation()
+                  event.dataTransfer.setData('text/plain', room.id)
+                  event.dataTransfer.effectAllowed = 'move'
+                  onDragStart()
+                }}
+                onDragEnd={() => onDragEnd?.()}
+              >
+                <GripVertical size={14} />
+              </button>
+            )}
             <button
               className={`glass-btn ${danmakuOn ? 'is-on' : ''}`}
               title={danmakuOn ? '关闭弹幕层' : '开启弹幕层'}
@@ -677,6 +760,18 @@ export function PlayerTile({ room, focused = false }: { room: Room; focused?: bo
             )}
             <span>{recording ? '停止' : '录制'}</span>
           </button>
+          {!room.isDemo && document.pictureInPictureEnabled && (
+            <button
+              className={`ctrl-btn ${pip ? 'is-active' : ''}`}
+              title={pip ? '退出画中画' : '画中画'}
+              onClick={(event) => {
+                event.stopPropagation()
+                void togglePip()
+              }}
+            >
+              <PictureInPicture2 size={14} />
+            </button>
+          )}
           <button
             className="ctrl-btn"
             title={fullscreen ? '退出全屏' : '全屏'}

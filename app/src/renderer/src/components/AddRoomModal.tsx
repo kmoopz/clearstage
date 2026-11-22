@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { AlertTriangle, Link2, Loader2, Plus, Radio, X } from 'lucide-react'
+import { AlertTriangle, ClipboardPaste, Link2, Loader2, Plus, Radio, X } from 'lucide-react'
 import { useAppStore } from '../store'
 import { errorMessage } from '../lib/format'
 
@@ -19,6 +19,49 @@ export function AddRoomModal() {
   const [error, setError] = useState('')
   const [probe, setProbe] = useState('')
   const [probing, setProbing] = useState(false)
+  const [clipboardBusy, setClipboardBusy] = useState(false)
+
+  useEffect(() => {
+    if (!open) return
+    let alive = true
+    setClipboardBusy(true)
+    void window.clearstage.app
+      .readClipboard()
+      .then((text) => {
+        if (!alive) return
+        const match = text.match(/live\.bilibili\.com\/(\d+)/i) ?? text.trim().match(/^\d{1,10}$/)
+        if (match) setUrl(match[1] ?? match[0])
+      })
+      .catch(() => undefined)
+      .finally(() => alive && setClipboardBusy(false))
+    return () => {
+      alive = false
+    }
+  }, [open])
+
+  async function fillFromClipboard(): Promise<void> {
+    setClipboardBusy(true)
+    try {
+      const text = await window.clearstage.app.readClipboard()
+      const biliMatch = text.match(/live\.bilibili\.com\/(\d+)/i) ?? text.trim().match(/^\d{1,10}$/)
+      if (biliMatch) {
+        setUrl(biliMatch[1] ?? biliMatch[0])
+        setMode('bilibili')
+        return
+      }
+      const directMatch = text.trim().match(/^https?:\/\/\S+\.(m3u8|flv)(\?\S*)?$/i)
+      if (directMatch) {
+        setDirectUrl(directMatch[0])
+        setMode('direct')
+        return
+      }
+      setError('剪贴板里没有识别到 B 站直播间或 HLS / FLV 直链')
+    } catch (error) {
+      setError(errorMessage(error))
+    } finally {
+      setClipboardBusy(false)
+    }
+  }
 
   useEffect(() => {
     const handler = (event: KeyboardEvent): void => {
@@ -103,14 +146,20 @@ export function AddRoomModal() {
             <>
               <label className="field">
                 <span>直播间地址或房间号</span>
-                <input
-                  autoFocus
-                  value={url}
-                  onChange={(event) => setUrl(event.target.value)}
-                  placeholder="https://live.bilibili.com/6 或 6"
-                  spellCheck={false}
-                />
-                <small>支持短号。登录 B 站账号后可解锁更高画质与弹幕发送。</small>
+                <div className="input-with-action">
+                  <input
+                    autoFocus
+                    value={url}
+                    onChange={(event) => setUrl(event.target.value)}
+                    placeholder="https://live.bilibili.com/6 或 6"
+                    spellCheck={false}
+                  />
+                  <button type="button" className="mini-action" onClick={() => void fillFromClipboard()} disabled={clipboardBusy}>
+                    {clipboardBusy ? <Loader2 size={13} className="spin" /> : <ClipboardPaste size={13} />}
+                    剪贴板
+                  </button>
+                </div>
+                <small>支持短号；打开窗口时会自动读取剪贴板中的直播间链接。登录 B 站账号后可解锁更高画质与弹幕发送。</small>
               </label>
               <div className="room-detect-card">
                 <span className="detect-orbit">
