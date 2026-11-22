@@ -63,7 +63,7 @@
         </details>
         <details class="faq-item" data-category="install" id="faq-security">
           <summary><span class="qnum">02</span> Windows 提示未知发布者 / 点击“仍要运行”没反应怎么办？<span class="plus"></span></summary>
-          <div class="faq-answer"><p>0.1.0 使用 ClearStage 本地自签名证书。当前电脑已安装信任，可直接运行安装包；其他电脑请先下载并安装 <a href="downloads/ClearStage-CodeSigning.cer" style="color:var(--mint)">ClearStage-CodeSigning.cer</a> 到「受信任的根证书颁发机构」和「受信任的发布者」。</p><p>如果点击“仍要运行”后没有反应，通常是因为在压缩包里直接双击 EXE，或解压到了权限受限的目录。请改用安装程序，或把整个 zip 解压到桌面等普通目录再运行。</p></div>
+          <div class="faq-answer"><p>0.1.0 使用 ClearStage 本地自签名证书，不是 CA 证书。下载后先把 <a href="downloads/ClearStage-CodeSigning.cer" style="color:var(--mint)">ClearStage-CodeSigning.cer</a> 安装到「受信任的根证书颁发机构」和「受信任的发布者」，再运行安装包。</p><p>如果点击“仍要运行”后没有反应，通常是因为在压缩包里直接双击 EXE，或解压到了权限受限的目录。请改用安装程序，或把整个 zip 解压到桌面等普通目录再运行。</p></div>
         </details>
         <details class="faq-item" data-category="install">
           <summary><span class="qnum">03</span> 启动后白屏或窗口一闪而过？<span class="plus"></span></summary>

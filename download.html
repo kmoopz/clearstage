@@ -49,7 +49,7 @@
               <div class="release-icon">⊞</div>
               <div><h3>Windows 安装程序</h3><span>ClearStage-Setup-0.1.0.exe · 108 MB</span></div>
             </div>
-            <p class="muted" style="margin-top:13px;font-size:11px;line-height:1.8">推荐下载。安装到当前用户目录，自动创建桌面与开始菜单快捷方式，不需要管理员权限。安装包与主程序都使用 ClearStage 本地签名证书签名；当前电脑已安装信任。</p>
+            <p class="muted" style="margin-top:13px;font-size:11px;line-height:1.8">推荐下载。安装到当前用户目录，自动创建桌面与开始菜单快捷方式，不需要管理员权限。安装包与主程序都使用 ClearStage 本地签名证书签名；安装随包证书后 Windows 会将其识别为受信任发布者。</p>
             <div class="release-actions">
               <a class="btn btn-primary" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-Setup-0.1.0.exe" download>下载安装包 <span aria-hidden="true">↓</span></a>
               <a class="btn btn-ghost" href="docs.html#install">安装与证书说明</a>
@@ -107,7 +107,7 @@
             <div class="checksum"><code id="sha-zip">ca034fe59fc620e6ab67f0e4801c92234d7f61a99fa94b1c195ff674b566c03a</code><button type="button" data-copy="ca034fe59fc620e6ab67f0e4801c92234d7f61a99fa94b1c195ff674b566c03a" id="copy-zip">复制</button></div>
           </div>
 
-          <div class="callout warn" style="margin-top:18px">0.1.0 使用 <b>ClearStage 本地自签名证书</b>，当前电脑已安装信任。其他电脑如果仍提示未知发布者，可下载 <a href="downloads/ClearStage-CodeSigning.cer" style="color:var(--amber)">ClearStage-CodeSigning.cer</a>，安装到「受信任的根证书颁发机构」与「受信任的发布者」。<a href="downloads/SIGNING.txt" style="color:var(--amber)">签名与校验说明</a>。请勿在压缩包内直接双击 EXE，也不要从受限项目目录运行。</div>
+          <div class="callout warn" style="margin-top:18px">0.1.0 使用 <b>ClearStage 本地自签名证书</b>，不是 CA 证书。下载后请先安装随包的 <a href="downloads/ClearStage-CodeSigning.cer" style="color:var(--amber)">ClearStage-CodeSigning.cer</a> 到「受信任的根证书颁发机构」与「受信任的发布者」，Windows 才会显示 ClearStage 发布者。<a href="downloads/SIGNING.txt" style="color:var(--amber)">签名与校验说明</a>。请勿在压缩包内直接双击 EXE，也不要从受限项目目录运行。</div>
 
           <h3 style="margin-top:28px">安装或解压之后</h3>
           <ul class="release-notes">
