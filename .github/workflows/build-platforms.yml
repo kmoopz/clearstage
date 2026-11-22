@@ -48,16 +48,8 @@ jobs:
           if-no-files-found: error
 
   macos:
-    name: macOS ${{ matrix.arch }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - arch: x64
-            runner: macos-13
-          - arch: arm64
-            runner: macos-14
-    runs-on: ${{ matrix.runner }}
+    name: macOS universal
+    runs-on: macos-latest
     defaults:
       run:
         working-directory: app
@@ -77,16 +69,19 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: |
           set -euo pipefail
-          npx electron-builder --mac dir --${{ matrix.arch }} --publish never
-          APP=$(find release -maxdepth 3 -type d -name '*.app' | head -n1)
-          test -n "$APP"
-          codesign --force --deep --sign - "$APP"
-          codesign --verify --deep --strict "$APP"
           mkdir -p "$GITHUB_WORKSPACE/artifacts"
-          ditto -c -k --sequesterRsrc --keepParent "$APP" "$GITHUB_WORKSPACE/artifacts/ClearStage-0.1.0-mac-${{ matrix.arch }}.zip"
+          for ARCH in x64 arm64; do
+            npx electron-builder --mac dir --$ARCH --publish never
+            if [ "$ARCH" = "x64" ]; then APPDIR=release/mac; else APPDIR=release/mac-arm64; fi
+            APP=$(find "$APPDIR" -maxdepth 1 -type d -name '*.app' | head -n1)
+            test -n "$APP"
+            codesign --force --deep --sign - "$APP"
+            codesign --verify --deep --strict "$APP"
+            ditto -c -k --sequesterRsrc --keepParent "$APP" "$GITHUB_WORKSPACE/artifacts/ClearStage-0.1.0-mac-$ARCH.zip"
+          done
       - uses: actions/upload-artifact@v4
         with:
-          name: macos-${{ matrix.arch }}
+          name: macos
           path: artifacts/*
           if-no-files-found: error
 
