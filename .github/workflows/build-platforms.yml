@@ -33,7 +33,7 @@ jobs:
             echo "AppImage build failed; falling back to tar.gz"
             npx electron-builder --linux tar.gz --x64 --publish never
           fi
-          ARTIFACT=$(find dist -maxdepth 2 -type f \( -name '*.AppImage' -o -name '*.tar.gz' \) | head -n1)
+          ARTIFACT=$(find release -maxdepth 2 -type f \( -name '*.AppImage' -o -name '*.tar.gz' \) | head -n1)
           test -n "$ARTIFACT"
           if [[ "$ARTIFACT" == *.AppImage ]]; then
             cp "$ARTIFACT" "$GITHUB_WORKSPACE/artifacts/ClearStage-0.1.0-linux-x64.AppImage"
@@ -78,7 +78,7 @@ jobs:
         run: |
           set -euo pipefail
           npx electron-builder --mac dir --${{ matrix.arch }} --publish never
-          APP=$(find dist -maxdepth 3 -type d -name '*.app' | head -n1)
+          APP=$(find release -maxdepth 3 -type d -name '*.app' | head -n1)
           test -n "$APP"
           codesign --force --deep --sign - "$APP"
           codesign --verify --deep --strict "$APP"
