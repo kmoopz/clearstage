@@ -7,21 +7,24 @@ Thumbprint          : FDEDC7F1FAA58A685DB9D2BDD967E7B8B65C1D72
 Validity            : 2026-11-22 to 2029-11-22
 Public certificate  : ClearStage-CodeSigning.cer
 
-Current PC:
-- The certificate is installed in CurrentUser\Root and CurrentUser\TrustedPublisher.
-- The application EXE and installer are timestamped and report "Valid" via Authenticode.
+Bundled trust setup:
+- The NSIS installer contains ClearStage-CodeSigning.cer and automatically imports
+  it into CurrentUser\Root and CurrentUser\TrustedPublisher during installation.
+- The portable ZIP also contains ClearStage-CodeSigning.cer and
+  Install-Certificate.cmd. Run that script once to trust the publisher.
+- The app EXE and installer are timestamped and report "Valid" via Authenticode
+  after the certificate is trusted.
 
-Other PCs:
-- Windows may still show an unknown-publisher or SmartScreen warning.
-- Install ClearStage-CodeSigning.cer for the current user before running:
+First run on another PC:
+- Windows checks the installer signature before the installer can add the
+  certificate, so a self-signed build can still show an unknown-publisher or
+  SmartScreen warning on the very first run. Choose "More info -> Run anyway".
+- After installation, the app and later launches are recognized as ClearStage.
+- This cannot be fully removed without a CA-issued code-signing certificate.
 
+Manual certificate commands (only needed for repair):
   certutil -user -addstore Root ClearStage-CodeSigning.cer
   certutil -user -addstore TrustedPublisher ClearStage-CodeSigning.cer
 
-- Then verify with:
-
+Verify:
   signtool verify /pa /v ClearStage-Setup-0.1.0.exe
-
-To obtain a publicly trusted signature, replace this certificate with a CA-issued
-code-signing certificate and sign both the application EXE and the installer.
-A self-signed certificate cannot establish public publisher reputation.

@@ -373,10 +373,10 @@
                 <a class="artifact-link" href="downloads/ClearStage-CodeSigning.cer" download>下载证书 ↓</a>
               </div>
               <div class="checksum">
-                <code id="release-sha">0837a00a83fc78f43c41ddac927c714718ca352ae69be196cf3c231396d3f16d</code>
-                <button type="button" data-copy="0837a00a83fc78f43c41ddac927c714718ca352ae69be196cf3c231396d3f16d" id="copy-sha">复制</button>
+                <code id="release-sha">89d5944d800f8891afb22c3760e332a493589e882bff918efadde32815625e01</code>
+                <button type="button" data-copy="89d5944d800f8891afb22c3760e332a493589e882bff918efadde32815625e01" id="copy-sha">复制</button>
               </div>
-              <p class="download-note">安装包使用 ClearStage 本地自签名证书，不是 CA 证书。安装随包的 ClearStage-CodeSigning.cer 到「受信任的根证书颁发机构」和「受信任的发布者」后，Windows 会显示 ClearStage 发布者；未安装证书的电脑可能仍提示未知发布者。SHA-256 可在 <a href="download.html">下载页</a> 核对。</p>
+              <p class="download-note">安装包已内置 ClearStage 代码签名证书，并在安装时导入当前用户的受信任存储；便携包内也附带证书和 <code>Install-Certificate.cmd</code>，不需要再次下载证书。首次运行未受信任的安装包时，Windows 可能仍提示未知发布者（证书要在安装程序运行后才生效），选择“仍要运行”即可；自签名不是 CA 证书，无法在首次运行前获得系统信任。SHA-256 可在 <a href="download.html">下载页</a> 核对。</p>
             </div>
           </div>
         </div>
