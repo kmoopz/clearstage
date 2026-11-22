@@ -52,7 +52,6 @@ export function defaultSettings(): AppSettings {
     customCss: '',
     recordDir: path.join(app.getPath('videos'), 'ClearStage'),
     ffmpegPath: '',
-    defaultQuality: 10000,
     layout: '4',
     videoFit: 'cover',
     multiViewQuality: 'auto',

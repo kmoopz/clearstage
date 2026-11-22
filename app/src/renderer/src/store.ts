@@ -37,7 +37,6 @@ const FALLBACK_SETTINGS: AppSettings = {
   customCss: '',
   recordDir: '',
   ffmpegPath: '',
-  defaultQuality: 10000,
   layout: '4',
   videoFit: 'cover',
   multiViewQuality: 'auto',

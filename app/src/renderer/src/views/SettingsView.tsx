@@ -224,22 +224,9 @@ export function SettingsView() {
               <div className="settings-section-head">
                 <span className="eyebrow">PLAYBACK</span>
                 <h2>播放偏好</h2>
-                <p>默认画质会在每次接入直播时使用。未登录时 B 站通常最高只提供超清 720P；登录后按账号权限提供蓝光或原画。</p>
+                <p>每路直播默认请求最高画质，实际档位由 B 站账号、粉丝等级与网络决定；未登录时通常最高只提供超清 720P。</p>
               </div>
               <div className="settings-card">
-                <div className="settings-row">
-                  <div><b>默认画质</b><p>直播流支持的最高画质可能受账号、粉丝等级与网络影响。</p></div>
-                  <select
-                    value={settings.defaultQuality}
-                    onChange={(event) => void updateSettings({ defaultQuality: Number(event.target.value) })}
-                  >
-                    <option value={10000}>原画 / 自动最高</option>
-                    <option value={400}>蓝光</option>
-                    <option value={250}>超清</option>
-                    <option value={150}>高清</option>
-                    <option value={80}>流畅</option>
-                  </select>
-                </div>
                 <div className="settings-row">
                   <div><b>画面适配</b><p>16:9 画面铺满；非 16:9 流可选择完整显示，避免裁切。</p></div>
                   <select

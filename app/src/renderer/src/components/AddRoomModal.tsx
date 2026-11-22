@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { AlertTriangle, ClipboardPaste, Link2, Loader2, Plus, Radio, X } from 'lucide-react'
+import { AlertTriangle, Check, ClipboardPaste, Clock3, Link2, Loader2, Plus, Radio, X } from 'lucide-react'
 import { useAppStore } from '../store'
-import { errorMessage } from '../lib/format'
+import { errorMessage, initials } from '../lib/format'
 
 type Mode = 'bilibili' | 'direct'
 
@@ -9,6 +9,12 @@ export function AddRoomModal() {
   const open = useAppStore((state) => state.addRoomOpen)
   const close = useAppStore((state) => state.setAddRoomOpen)
   const addRoom = useAppStore((state) => state.addRoom)
+  const rooms = useAppStore((state) => state.rooms)
+  const activeIds = useAppStore((state) => state.activeIds)
+  const toggleRoom = useAppStore((state) => state.toggleRoom)
+  const setSelected = useAppStore((state) => state.setSelected)
+  const setFocusedRoom = useAppStore((state) => state.setFocusedRoom)
+  const setPage = useAppStore((state) => state.setPage)
   const [mode, setMode] = useState<Mode>('bilibili')
   const [url, setUrl] = useState('')
   const [directUrl, setDirectUrl] = useState('')
@@ -20,6 +26,27 @@ export function AddRoomModal() {
   const [probe, setProbe] = useState('')
   const [probing, setProbing] = useState(false)
   const [clipboardBusy, setClipboardBusy] = useState(false)
+
+  const historyRooms = useMemo(
+    () =>
+      [...rooms].sort((a, b) => {
+        if (a.liveStatus === 'live' && b.liveStatus !== 'live') return -1
+        if (b.liveStatus === 'live' && a.liveStatus !== 'live') return 1
+        return (b.lastOpenedAt ?? b.addedAt) - (a.lastOpenedAt ?? a.addedAt)
+      }),
+    [rooms]
+  )
+
+  function openSavedRoom(roomId: string): void {
+    if (activeIds.includes(roomId)) {
+      setSelected(roomId)
+      setFocusedRoom(null)
+    } else {
+      toggleRoom(roomId)
+    }
+    setPage('live')
+    close(false)
+  }
 
   useEffect(() => {
     if (!open) return
@@ -140,6 +167,43 @@ export function AddRoomModal() {
             <Link2 size={15} /> 通用直链
           </button>
         </div>
+
+        {historyRooms.length > 0 && (
+          <section className="history-rooms">
+            <div className="history-rooms-head">
+              <span><Clock3 size={13} /> 历史直播间</span>
+              <em>{historyRooms.length} 个已保存</em>
+            </div>
+            <div className="history-room-list">
+              {historyRooms.map((room) => {
+                const active = activeIds.includes(room.id)
+                return (
+                  <button
+                    key={room.id}
+                    className={`history-room ${active ? 'is-active' : ''}`}
+                    onClick={() => openSavedRoom(room.id)}
+                    title={active ? '已在直播台，点击打开' : '快捷加入直播台'}
+                  >
+                    <span className="history-room-avatar">
+                      {initials(room.streamer)}
+                      <i className={room.liveStatus === 'live' ? 'is-live' : ''} />
+                    </span>
+                    <span className="history-room-copy">
+                      <b>{room.streamer || room.roomId}</b>
+                      <small>{room.title || room.sourceUrl}</small>
+                    </span>
+                    <span className={`history-room-state ${room.liveStatus === 'live' ? 'is-live' : ''}`}>
+                      {room.liveStatus === 'live' ? '直播中' : '未开播'}
+                    </span>
+                    <span className="history-room-action">
+                      {active ? <Check size={14} /> : <Plus size={14} />}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </section>
+        )}
 
         <form onSubmit={handleSubmit} className="add-room-form">
           {mode === 'bilibili' ? (

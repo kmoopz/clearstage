@@ -150,7 +150,7 @@ export function registerIpc(context: IpcContext): void {
     if (!room) throw new Error('找不到直播间')
     store.touchRoom(roomId)
     if (room.platform === 'bilibili') {
-      return bili.getPlayInfo(room, quality ?? store.data.settings.defaultQuality, (url, headers) =>
+      return bili.getPlayInfo(room, quality ?? 10000, (url, headers) =>
         proxy.register(url, headers)
       )
     }
@@ -311,7 +311,7 @@ export function rawStreamResolver(
       const numericQuality = Number(quality)
       const play = await bili.getPlayInfo(
         room,
-        Number.isFinite(numericQuality) && numericQuality > 0 ? numericQuality : store.data.settings.defaultQuality,
+        Number.isFinite(numericQuality) && numericQuality > 0 ? numericQuality : 10000,
         (url) => url
       )
       const variant = play.variants.find((item) => item.protocol === 'hls') ?? play.variants[0]

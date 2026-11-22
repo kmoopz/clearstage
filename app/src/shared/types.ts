@@ -222,7 +222,6 @@ export interface AppSettings {
   customCss: string
   recordDir: string
   ffmpegPath: string
-  defaultQuality: number
   layout: string
   videoFit: 'cover' | 'contain'
   multiViewQuality: 'auto' | 'high'

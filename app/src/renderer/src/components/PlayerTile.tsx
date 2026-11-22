@@ -75,7 +75,7 @@ export function PlayerTile({
   const refreshRoom = useAppStore((state) => state.refreshRoom)
   const toast = useAppStore((state) => state.toast)
   const [info, setInfo] = useState<PlaybackInfo | null>(null)
-  const [quality, setQuality] = useState(String(settings.defaultQuality))
+  const [quality, setQuality] = useState('10000')
   const [actualQuality, setActualQuality] = useState<number | null>(null)
   const [loading, setLoading] = useState(!room.isDemo)
   const [buffering, setBuffering] = useState(false)
