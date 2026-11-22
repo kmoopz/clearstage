@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>常见问题 — 澄幕 ClearStage</title>
-  <meta name="description" content="澄幕 ClearStage 常见问题：安装、启动、B 站直播流、扫码登录、弹幕、录制、切片、歌曲识别、主播数据与通用直链模式。" />
+  <meta name="description" content="澄幕 ClearStage 常见问题：安装、启动、B 站直播流、Cookie 登录、弹幕、录制、切片、歌曲识别、主播数据与通用直链模式。" />
   <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="assets/site.css" />
 </head>
@@ -42,7 +42,7 @@
     <div class="container faq-page-layout">
       <div class="faq-search-wrap">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
-        <input class="faq-search" type="search" placeholder="搜索问题，例如：FFmpeg、黑屏、扫码、录制…" aria-label="搜索常见问题" />
+        <input class="faq-search" type="search" placeholder="搜索问题，例如：FFmpeg、黑屏、Cookie、录制…" aria-label="搜索常见问题" />
       </div>
 
       <div class="faq-categories" aria-label="问题分类">
@@ -76,7 +76,7 @@
 
         <details class="faq-item" data-category="playback">
           <summary><span class="qnum">05</span> 添加 B 站直播间失败怎么办？<span class="plus"></span></summary>
-          <div class="faq-answer"><p>确认输入的是直播间链接或房间号，例如 <code>https://live.bilibili.com/6</code> 或 <code>6</code>。主播未开播、房间被封禁、网络无法访问 B 站接口都会导致失败。</p><p>如果提示风控或 <code>-352</code>，先在「设置」扫码登录，并在浏览器打开一次该直播间，再返回重试。</p></div>
+          <div class="faq-answer"><p>确认输入的是直播间链接或房间号，例如 <code>https://live.bilibili.com/6</code> 或 <code>6</code>。主播未开播、房间被封禁、网络无法访问 B 站接口都会导致失败。</p><p>如果提示风控或 <code>-352</code>，先在「设置」导入浏览器 Cookie 登录，并在浏览器打开一次该直播间，再返回重试。</p></div>
         </details>
         <details class="faq-item" data-category="playback">
           <summary><span class="qnum">06</span> 画面黑屏或一直显示「正在接入纯净流」？<span class="plus"></span></summary>
@@ -84,11 +84,11 @@
         </details>
         <details class="faq-item" data-category="playback">
           <summary><span class="qnum">07</span> 为什么最高画质是灰的或只能选到较低画质？<span class="plus"></span></summary>
-          <div class="faq-answer"><p>B 站会根据账号状态、粉丝等级、直播流本身和网络条件限制画质。未登录时通常只能获取较低档位。尝试在「设置 → 账号与登录」扫码登录，或确认主播本身没有提供更高画质。</p></div>
+          <div class="faq-answer"><p>B 站会根据账号状态、粉丝等级、直播流本身和网络条件限制画质。未登录时通常只能获取较低档位。尝试在「设置 → 账号与登录」粘贴浏览器 Cookie 登录，或确认主播本身没有提供更高画质。</p></div>
         </details>
         <details class="faq-item" data-category="playback">
           <summary><span class="qnum">08</span> 弹幕不显示 / 显示「受限」？<span class="plus"></span></summary>
-          <div class="faq-answer"><p>先确认主播正在直播且没有关闭弹幕。澄幕需要连接 B 站弹幕 WebSocket；公司网络、校园网或代理可能阻断 <code>wss://*.chat.bilibili.com</code>。</p><p>弹幕服务器鉴权依赖 WBI 签名。遇到平台风控时，稍等几分钟或扫码登录后再试。画面正常但弹幕为空，通常是连接问题，不是播放问题。</p></div>
+          <div class="faq-answer"><p>先确认主播正在直播且没有关闭弹幕。澄幕需要连接 B 站弹幕 WebSocket；公司网络、校园网或代理可能阻断 <code>wss://*.chat.bilibili.com</code>。</p><p>弹幕服务器鉴权依赖 WBI 签名。遇到平台风控时，稍等几分钟或粘贴浏览器 Cookie 登录后再试。画面正常但弹幕为空，通常是连接问题，不是播放问题。</p></div>
         </details>
         <details class="faq-item" data-category="playback">
           <summary><span class="qnum">09</span> 多画面最多能开几路？会很卡吗？<span class="plus"></span></summary>
@@ -97,15 +97,15 @@
 
         <details class="faq-item" data-category="account">
           <summary><span class="qnum">10</span> 不登录能看直播和录制吗？<span class="plus"></span></summary>
-          <div class="faq-answer"><p>公开的 B 站直播画面、多画面、录制、切片和本地数据都不需要登录。需要进一步访问账号权限内容时（更高画质、发送弹幕、更完整的动态），请扫码登录你自己的 B 站账号。</p><p>如果扫码后没有反应，可以在扫码窗口点「扫码失败？粘贴浏览器 Cookie」，从浏览器复制 SESSDATA 和 bili_jct 登录；凭证只在本机验证和加密保存。</p></div>
+          <div class="faq-answer"><p>公开的 B 站直播画面、多画面、录制、切片和本地数据都不需要登录。需要进一步访问账号权限内容时（更高画质、发送弹幕、更完整的动态），请从已登录的浏览器复制 B 站 Cookie，在「设置 → 账号与登录 → 粘贴浏览器 Cookie」中导入。</p><p>只填 SESSDATA 也能登录；要发送弹幕还需要同时填入 bili_jct。凭证只在本机验证和加密保存。</p></div>
         </details>
         <details class="faq-item" data-category="account">
-          <summary><span class="qnum">11</span> 扫码登录失败或二维码过期？<span class="plus"></span></summary>
-          <div class="faq-answer"><p>二维码有效期约三分钟。过期后点「重新生成」，用哔哩哔哩手机客户端扫码，并在手机上点确认。只扫码不确认不会完成登录。</p><p>如果手机端显示登录成功但澄幕未刷新，关闭弹窗重新打开，或在设置页点一次账号状态刷新。登录 Cookie 使用系统安全存储加密，仅保存在本机。</p></div>
+          <summary><span class="qnum">11</span> B 站登录 Cookie 怎么获取，失效了怎么办？<span class="plus"></span></summary>
+          <div class="faq-answer"><p>在电脑浏览器登录 bilibili.com，按 F12 → 应用 / Application → Cookies → https://www.bilibili.com，复制 SESSDATA 和 bili_jct。把两者粘贴到「设置 → 账号与登录」，应用会先调用 B 站 nav 接口验证，再加密保存。</p><p>Cookie 会随退出登录、修改密码或平台策略失效。若提示未登录，重新在浏览器登录并复制一次即可。不要在聊天、Issue 或网盘中分享自己的 Cookie。</p></div>
         </details>
         <details class="faq-item" data-category="account">
           <summary><span class="qnum">12</span> 发送弹幕失败怎么办？<span class="plus"></span></summary>
-          <div class="faq-answer"><p>检查是否已登录、弹幕是否超过 20 个字符、直播间是否开启弹幕或设置了等级/粉丝勋章门槛。平台也可能对发送频率做限制，连续发送时请提高间隔。</p><p>若提示登录过期，重新扫码登录。连发有 3–15 次、最短 3 秒间隔的内置限制，超过限制会被拒绝。</p></div>
+          <div class="faq-answer"><p>检查是否已登录、弹幕是否超过 20 个字符、直播间是否开启弹幕或设置了等级/粉丝勋章门槛。平台也可能对发送频率做限制，连续发送时请提高间隔。</p><p>若提示登录过期，重新从浏览器复制 Cookie 登录。连发有 3–15 次、最短 3 秒间隔的内置限制，超过限制会被拒绝。</p></div>
         </details>
 
         <details class="faq-item" data-category="recording">

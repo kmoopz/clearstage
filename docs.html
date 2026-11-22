@@ -139,7 +139,7 @@ https://live.bilibili.com/blanc/6
           <p>点击「添加直播间」后，澄幕会读取房间标题、主播、封面、在线人气与开播状态，并把它加入直播台与本地收藏。再次添加同一个房间会更新信息，不会产生重复项。</p>
           <h3>纯净流指的是什么</h3>
           <p>澄幕读取平台返回的直播媒体流（HLS 或 FLV），不加载直播间网页、推荐模块、活动浮层和广告。播放请求由本机媒体代理转发，用于补齐 CDN 需要的 Referer 与 CORS 头，不经过第三方服务器。</p>
-          <div class="callout">B 站接口可能随平台调整而变化。遇到 <code>-352</code> 风控提示时，先在「设置」扫码登录，或在浏览器打开一次该直播间，再回到澄幕重试。</div>
+          <div class="callout">B 站接口可能随平台调整而变化。遇到 <code>-352</code> 风控提示时，先在「设置」粘贴浏览器 Cookie 登录，或在浏览器打开一次该直播间，再回到澄幕重试。</div>
         </section>
 
         <section id="direct">
@@ -158,14 +158,14 @@ https://live.bilibili.com/blanc/6
         <section id="account">
           <span class="doc-kicker">05 / ACCOUNT</span>
           <h2>登录与弹幕</h2>
-          <p><b>进一步访问需要你自己的 B 站账号。</b>B 站可以在澄幕内扫码登录；观看公开 B 站画面和本地录制不需要登录。扫码登录为你自己的账号授权。</p>
+          <p><b>进一步访问需要你自己的 B 站账号。</b>澄幕不再提供扫码登录，请从已登录的浏览器复制 Cookie 导入；观看公开 B 站画面和本地录制不需要登录。</p>
           <p>登录 B 站后可以发送弹幕、使用账号可用的更高画质、获取更完整的公开动态数据。澄幕不会用该账号执行其他操作。</p>
           <ol>
-            <li>打开「设置 → 账号与登录」，点击「打开扫码登录」。</li>
-            <li>用哔哩哔哩手机客户端扫码，并在手机上确认。</li>
-            <li>登录成功后会显示昵称与 UID。Cookie 使用系统安全存储加密，保存在本机。</li>
+            <li>在电脑浏览器打开并登录 <code>bilibili.com</code>。</li>
+            <li>按 <code>F12 → 应用 / Application → Cookies → https://www.bilibili.com</code>，复制 <code>SESSDATA</code>；需要发送弹幕时再复制 <code>bili_jct</code>。</li>
+            <li>打开「设置 → 账号与登录」，点击「粘贴浏览器 Cookie」，填入后验证登录。</li>
           </ol>
-          <p><b>扫码没有反应时：</b>扫码窗口底部有「扫码失败？粘贴浏览器 Cookie」。在电脑浏览器登录 <code>bilibili.com</code>，按 <code>F12 → 应用 / Application → Cookies → https://www.bilibili.com</code>，把 <code>SESSDATA</code> 粘贴进去；需要发送弹幕时同时填入 <code>bili_jct</code>。凭证只在本机验证和加密保存。</p>
+          <p>凭证只在本机验证，并使用系统安全存储加密保存；不会上传到澄幕服务器。若 Cookie 失效，重复以上步骤重新导入。</p>
           <h3>发送弹幕</h3>
           <p>在右侧互动面板底部输入，<code>Enter</code> 发送，<code>Shift + Enter</code> 换行。B 站弹幕最多 20 个字符。发送记录会自动进入历史，可通过输入框左侧的星标收藏为常用语。</p>
           <div class="callout">登录凭证只用于弹幕发送与改善接口访问，不会上传到澄幕服务器。退出登录会即时清除本地凭证。</div>
@@ -249,7 +249,7 @@ https://live.bilibili.com/blanc/6
         <section id="themes">
           <span class="doc-kicker">11 / THEMES</span>
           <h2>主题与自定义 CSS</h2>
-          <p>「风格工坊」提供夜幕、潮汐、胶片、晨雾四套主题，可独立调整强调色、弹幕字号、不透明度、礼物提示与进场提示。</p>
+          <p>「风格工坊」提供八套主题：夜幕、潮汐、胶片、晨雾，以及四套原创二次元氛围插画主题「星野、樱町、电波、海盐」。主题会改变界面底色、表面层次与强调色，也可以独立调整弹幕字号、不透明度、礼物提示与进场提示。</p>
           <p>高级用户可以在「自定义 CSS」中覆盖界面变量。示例：</p>
           <pre><code>:root {
   --radius-lg: 20px;
@@ -301,7 +301,7 @@ https://live.bilibili.com/blanc/6
             <li>确认主播正在直播，而不是轮播或下播状态。</li>
             <li>点播放器右上角刷新按钮；直播流地址有有效期，澄幕会重新解析。</li>
             <li>在浏览器打开一次该直播间，再回来重试。</li>
-            <li>B 站接口可能触发风控，尝试扫码登录后再解析。</li>
+            <li>B 站接口可能触发风控，尝试用浏览器 Cookie 登录后再解析。</li>
           </ul>
           <h3>弹幕显示「受限」或连接失败</h3>
           <ul>
@@ -321,11 +321,11 @@ https://live.bilibili.com/blanc/6
             <li>选择的起止时间需要至少间隔 0.5 秒。</li>
             <li>如果录制仍在进行，等停止并完成合并后再做精确切片。</li>
           </ul>
-          <h3>扫码登录失败</h3>
+          <h3>登录 Cookie 失效或无法验证</h3>
           <ul>
-            <li>二维码三分钟过期，点「重新生成」。</li>
-            <li>确认手机端已点确认，而不是只完成扫码。</li>
-            <li>如果扫码后状态一直不变化，改用「扫码失败？粘贴浏览器 Cookie」：从已登录的浏览器复制 SESSDATA 与 bili_jct，应用会用 B 站 nav 接口验证后再保存。</li>
+            <li>确认复制的是已登录 B 站账号的 <code>SESSDATA</code>，没有多余空格或引号。</li>
+            <li>只复制 SESSDATA 也能登录；缺少 <code>bili_jct</code> 时无法发送弹幕，需要重新复制。</li>
+            <li>如果提示账号未登录或接口风控，请先在浏览器打开并登录一次 bilibili.com，再重新复制 Cookie。</li>
             <li>若系统安全存储不可用，应用会回退为本地文件保存；可在「数据与关于」确认应用数据目录。</li>
           </ul>
           <h3>Windows 提示未知发布者，或“仍要运行”没有反应</h3>
