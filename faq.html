@@ -127,7 +127,7 @@
 
         <details class="faq-item" data-category="music">
           <summary><span class="qnum">17</span> 自动识别歌曲需要什么？<span class="plus"></span></summary>
-          <div class="faq-answer"><p>需要 FFmpeg、一个 AudD 或 ACRCloud 账号，以及其 API 凭证。开启后，录制期间每约 30 秒采样一次，识别到切歌时把上一首保存为 M4A。识别服务可能产生第三方费用。</p><p>纯音乐、翻唱、串烧或环境噪音下准确率会下降。重要内容建议从录制时间线手动标记。</p></div>
+          <div class="faq-answer"><p>需要 FFmpeg。识别服务可选：<b>AcoustID</b>（免费申请 Client API Key，配合 Chromaprint <code>fpcalc</code>，无按次费用）、<b>SongRec</b>（免费开源外部程序，无需 Key）、<b>AudD / ACRCloud</b>（限时试用或按量付费）。</p><p>开启后，录制期间每约 30 秒采样一次，识别到切歌时把上一首保存为 M4A。AcoustID 依赖公开指纹库，冷门歌/现场版可能识别不到；SongRec 使用非官方 Shazam 接口，可能失效。重要内容建议手动标记。</p></div>
         </details>
         <details class="faq-item" data-category="music">
           <summary><span class="qnum">18</span> 手动标记歌曲为什么失败？<span class="plus"></span></summary>

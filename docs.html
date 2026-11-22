@@ -236,14 +236,15 @@ https://live.bilibili.com/blanc/6
         <section id="songs">
           <span class="doc-kicker">09 / SONG CAPTURE</span>
           <h2>歌曲识别与分轨</h2>
-          <p>澄幕支持两种保存歌曲的方式：自动识别与手动标记。两者都需要 FFmpeg 才能导出音频。</p>
+          <p>澄幕支持自动识别与手动标记两种保存歌曲的方式。两者都需要 FFmpeg 才能导出音频；自动识别可选用免费方案或付费商业 API。</p>
           <h3>自动识别</h3>
           <ol>
-            <li>在「设置 → 歌曲识别」中启用歌曲捕获，选择 AudD 或 ACRCloud。</li>
-            <li>填入对应服务的 Token 或 Host / Access Key / Access Secret，保存设置。</li>
-            <li>在录制时开启歌曲模式（歌曲识别启用后默认开启）。澄幕每约 30 秒采样一次音频；识别到切歌时，将上一首保存为独立 M4A。</li>
+            <li><b>AcoustID（推荐，免费）：</b>在 <code>acoustid.org/api-key</code> 免费申请 Client API Key，安装 Chromaprint <code>fpcalc</code>（澄幕会自动查找 PATH 或 <code>C:\ffmpeg\bin\fpcalc.exe</code>），然后在「设置 → 歌曲识别」选择 AcoustID 并填写 Key。AcoustID 按音频指纹查询 MusicBrainz，没有按次费用。</li>
+            <li><b>SongRec（免费，外部程序）：</b>安装开源 SongRec，在设置里填写 <code>SongRec.exe</code> 路径，无需 API Key。SongRec 使用非官方 Shazam 接口，可能随服务变化失效。</li>
+            <li><b>AudD / ACRCloud：</b>填写对应 Token 或 Host / Access Key / Secret。识别率高，但只有限时试用或按量付费额度。</li>
+            <li>保存设置后开始录制。澄幕每约 30 秒采样一次音频；识别到切歌时，把上一首保存为独立 M4A。</li>
           </ol>
-          <p>识别服务由第三方提供，可能需要付费额度。密钥只保存在本机设置文件中，不会写入日志或上传到澄幕。</p>
+          <p>识别密钥只保存在本机设置文件中，不会写入日志或上传到澄幕。免费方案同样受识别库覆盖与网络状况影响；冷门歌、现场版、翻唱和串烧可能识别不到。</p>
           <h3>手动标记</h3>
           <p>在「录制库」选择一段录制，点「标记歌曲」，填写歌名、歌手与起止时间。适合没有配置识别服务、或只想保留某一首歌的场景。</p>
           <div class="callout warn">自动分轨依赖外部识别准确率。遇到纯音乐、翻唱、串烧或环境噪音时可能识别不到或切分不准；重要内容建议手动标记。</div>
