@@ -25,6 +25,8 @@
 
 最新发布：https://github.com/kmoopz/clearstage/releases/tag/v0.1.0
 
+macOS 构建要求 **macOS 13+**（Electron 45 平台要求）。
+
 | 平台 | 直接下载 | 安装方式 |
 | --- | --- | --- |
 | Windows 10 / 11 x64 | [安装程序](https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-Setup-0.1.0.exe) · [便携包](https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-0.1.0-win-x64.zip) | 安装程序自动创建快捷方式；便携包完整解压后运行 |
