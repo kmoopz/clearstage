@@ -23,7 +23,7 @@
       </nav>
       <div class="header-actions">
         <span class="header-version">RELEASE · 0.1.0</span>
-        <a class="btn btn-primary btn-sm" href="https://github.com/kmoopz/clearstage/releases/download/v0.1.0/ClearStage-Setup-0.1.0.exe" download>下载安装包 <span aria-hidden="true">↓</span></a>
+        <a class="btn btn-primary btn-sm" href="#platforms">选择平台 <span aria-hidden="true">↓</span></a>
         <button class="mobile-toggle" type="button" aria-label="打开导航" aria-expanded="false"><span></span><span></span><span></span></button>
       </div>
     </div>
@@ -42,7 +42,7 @@
     <div class="container download-page">
       <div class="download-page-grid">
         <div>
-          <div class="version-head"><span class="badge">LATEST</span><span>v0.1.0 · 2026-11-22</span></div>
+          <div class="version-head" id="platforms"><span class="badge">LATEST</span><span>v0.1.0 · 2026-11-22</span></div>
 
           <div class="release-card">
             <div class="release-title">
@@ -106,6 +106,7 @@
             <li>主播数据本地快照、公开动态与近期视频。</li>
             <li>AudD / ACRCloud 歌曲识别与手动标记。</li>
             <li>通用 HLS / FLV 直链模式（播放、多画面与录制）。</li>
+            <li>新增 Linux AppImage 与 macOS Intel / Apple Silicon 构建。</li>
           </ul>
         </div>
 
@@ -119,19 +120,6 @@
             <tr><td>网络</td><td>稳定宽带，建议 20 Mbps+</td></tr>
             <tr><td>可选</td><td>FFmpeg 5+</td></tr>
           </table>
-
-          <div class="checksum-box">
-            <label>INSTALLER SHA-256</label>
-            <div class="checksum"><code id="sha-installer">89d5944d800f8891afb22c3760e332a493589e882bff918efadde32815625e01</code><button type="button" data-copy="89d5944d800f8891afb22c3760e332a493589e882bff918efadde32815625e01" id="copy-installer">复制</button></div>
-            <label style="margin-top:11px">PORTABLE ZIP SHA-256</label>
-            <div class="checksum"><code id="sha-zip">9f786d1c23e7258ea438b0b91e7e88711bec53c29a9bc898c369dd9443cfca69</code><button type="button" data-copy="9f786d1c23e7258ea438b0b91e7e88711bec53c29a9bc898c369dd9443cfca69" id="copy-zip">复制</button></div>
-            <label style="margin-top:11px">LINUX APPIMAGE SHA-256</label>
-            <div class="checksum"><code id="sha-linux">8531abc2248af7d255a4e1dd2d43aa9d2531c03e12a02b11d2f240eb2fe4bda3</code><button type="button" data-copy="8531abc2248af7d255a4e1dd2d43aa9d2531c03e12a02b11d2f240eb2fe4bda3" id="copy-linux">复制</button></div>
-            <label style="margin-top:11px">MACOS ARM64 SHA-256</label>
-            <div class="checksum"><code id="sha-mac-arm">c77e964a239e8ed91b91ebd814db65a20f51fbcd5e39d175b1cf516199d148d7</code><button type="button" data-copy="c77e964a239e8ed91b91ebd814db65a20f51fbcd5e39d175b1cf516199d148d7" id="copy-mac-arm">复制</button></div>
-            <label style="margin-top:11px">MACOS X64 SHA-256</label>
-            <div class="checksum"><code id="sha-mac-x64">20d2663889ff53b58391f5d302b2181a247bb7990aee7a42830ba6153e40c625</code><button type="button" data-copy="20d2663889ff53b58391f5d302b2181a247bb7990aee7a42830ba6153e40c625" id="copy-mac-x64">复制</button></div>
-          </div>
 
           <div class="callout warn" style="margin-top:18px">Windows 安装包使用 ClearStage 本地自签名证书，证书已内置并自动导入，无需二次下载；首次运行仍可能提示未知发布者，选择「仍要运行」即可。macOS 为 ad-hoc 签名、未公证；Linux AppImage 未签名。三个平台都无法在不购买 CA / Apple Developer 证书的情况下完全消除系统首次安全提示。<a href="downloads/SIGNING.txt" style="color:var(--amber)">签名与校验说明</a>。</div>
 
@@ -148,6 +136,43 @@
           <a class="btn btn-ghost btn-sm" style="margin-top:12px" href="docs.html#quick-start">快速开始 <span aria-hidden="true">↗</span></a>
         </aside>
       </div>
+
+      <section class="checksum-section" aria-labelledby="checksum-title">
+        <div class="checksum-section-head">
+          <div>
+            <span class="eyebrow">VERIFY BEFORE RUN</span>
+            <h2 id="checksum-title">发布文件校验</h2>
+          </div>
+          <p>下载后核对 SHA-256；Windows 安装包同时可用 <code>signtool verify /pa</code> 检查。</p>
+        </div>
+        <div class="checksum-list">
+          <div class="checksum-row">
+            <span>Windows 安装程序</span>
+            <code>89d5944d800f8891afb22c3760e332a493589e882bff918efadde32815625e01</code>
+            <button type="button" data-copy="89d5944d800f8891afb22c3760e332a493589e882bff918efadde32815625e01">复制</button>
+          </div>
+          <div class="checksum-row">
+            <span>Windows 便携包</span>
+            <code>9f786d1c23e7258ea438b0b91e7e88711bec53c29a9bc898c369dd9443cfca69</code>
+            <button type="button" data-copy="9f786d1c23e7258ea438b0b91e7e88711bec53c29a9bc898c369dd9443cfca69">复制</button>
+          </div>
+          <div class="checksum-row">
+            <span>Linux AppImage</span>
+            <code>8531abc2248af7d255a4e1dd2d43aa9d2531c03e12a02b11d2f240eb2fe4bda3</code>
+            <button type="button" data-copy="8531abc2248af7d255a4e1dd2d43aa9d2531c03e12a02b11d2f240eb2fe4bda3">复制</button>
+          </div>
+          <div class="checksum-row">
+            <span>macOS Apple Silicon</span>
+            <code>c77e964a239e8ed91b91ebd814db65a20f51fbcd5e39d175b1cf516199d148d7</code>
+            <button type="button" data-copy="c77e964a239e8ed91b91ebd814db65a20f51fbcd5e39d175b1cf516199d148d7">复制</button>
+          </div>
+          <div class="checksum-row">
+            <span>macOS Intel</span>
+            <code>20d2663889ff53b58391f5d302b2181a247bb7990aee7a42830ba6153e40c625</code>
+            <button type="button" data-copy="20d2663889ff53b58391f5d302b2181a247bb7990aee7a42830ba6153e40c625">复制</button>
+          </div>
+        </div>
+      </section>
     </div>
   </main>
 

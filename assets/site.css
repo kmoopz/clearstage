@@ -657,8 +657,26 @@ details.faq-item[open] summary { color: var(--mint); }
 .checksum-box label { display: block; margin-bottom: 5px; color: var(--muted); font-family: var(--font-mono); font-size: 8px; }
 .checksum-box .checksum { margin-top: 0; }
 
+.checksum-section { margin-top: 46px; padding: 28px 30px; border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(145deg, rgba(255,255,255,.022), rgba(255,255,255,.004)); }
+.checksum-section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; }
+.checksum-section-head h2 { margin-top: 6px; font-family: var(--font-display); font-size: 24px; font-weight: 560; letter-spacing: -.03em; }
+.checksum-section-head p { max-width: 390px; color: var(--muted); font-size: 10px; line-height: 1.8; text-align: right; }
+.checksum-section-head code { color: var(--paper-soft); font-family: var(--font-mono); font-size: 9px; }
+.checksum-list { margin-top: 21px; border-top: 1px solid var(--line); }
+.checksum-row { display: grid; grid-template-columns: 155px minmax(0, 1fr) 46px; align-items: center; gap: 15px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.checksum-row > span { color: var(--muted); font-size: 10px; }
+.checksum-row code { min-width: 0; color: var(--paper-soft); font-family: var(--font-mono); font-size: 9px; line-height: 1.7; overflow-wrap: anywhere; }
+.checksum-row button { padding: 4px 7px; border: 1px solid var(--line); border-radius: 4px; color: var(--mint); background: transparent; font-family: var(--font-mono); font-size: 8px; cursor: pointer; }
+.checksum-row button:hover { border-color: rgba(126,240,194,.4); background: var(--mint-soft); }
+
 @media (max-width: 900px) {
   .docs-layout, .download-page-grid { grid-template-columns: 1fr; gap: 30px; }
+  .checksum-section-head { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .checksum-section-head p { text-align: left; }
+  .checksum-row { grid-template-columns: 1fr auto; gap: 6px 12px; }
+  .checksum-row > span { grid-column: 1; }
+  .checksum-row code { grid-column: 1; font-size: 8px; }
+  .checksum-row button { grid-column: 2; grid-row: 1 / span 2; }
   .docs-toc { position: static; display: flex; flex-wrap: wrap; gap: 3px; }
   .docs-toc > span { width: 100%; }
   .docs-toc a { border-left: 0; border: 1px solid var(--line); border-radius: 4px; padding: 5px 8px; font-size: 8px; }
