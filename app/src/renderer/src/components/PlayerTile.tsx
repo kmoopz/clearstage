@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import Hls from 'hls.js'
 import mpegts from 'mpegts.js'
 import {
+  Activity,
   Captions,
   CaptionsOff,
   CircleStop,
@@ -12,6 +13,7 @@ import {
   Play,
   Radio,
   RefreshCw,
+  Scaling,
   Signal,
   Square,
   Volume2,
@@ -29,17 +31,28 @@ const DEMO_QUALITIES = [
   { quality: 250, label: '超清' }
 ]
 
+const QN_LABEL_FALLBACK: Record<number, string> = {
+  10000: '原画',
+  400: '蓝光',
+  250: '超清',
+  150: '高清',
+  80: '流畅'
+}
+
 const EMPTY_MESSAGES: ChatMessage[] = []
 
 const OVERLAY_POSITIONS = [14, 33, 53, 71]
 
-export function PlayerTile({ room }: { room: Room }) {
+export function PlayerTile({ room, focused = false }: { room: Room; focused?: boolean }) {
   const selectedId = useAppStore((state) => state.selectedId)
   const setSelected = useAppStore((state) => state.setSelected)
   const setChatOpen = useAppStore((state) => state.setChatOpen)
   const roomMessages = useAppStore((state) => state.messages[room.id])
   const messages = roomMessages ?? EMPTY_MESSAGES
   const settings = useAppStore((state) => state.settings)
+  const auth = useAppStore((state) => state.auth)
+  const activeCount = useAppStore((state) => state.activeIds.length)
+  const updateSettings = useAppStore((state) => state.updateSettings)
   const recordings = useAppStore((state) => state.recordings)
   const recordingBusy = useAppStore((state) => state.recordingBusy[room.id] ?? false)
   const startRecording = useAppStore((state) => state.startRecording)
@@ -49,7 +62,9 @@ export function PlayerTile({ room }: { room: Room }) {
   const toast = useAppStore((state) => state.toast)
   const [info, setInfo] = useState<PlaybackInfo | null>(null)
   const [quality, setQuality] = useState(String(settings.defaultQuality))
+  const [actualQuality, setActualQuality] = useState<number | null>(null)
   const [loading, setLoading] = useState(!room.isDemo)
+  const [buffering, setBuffering] = useState(false)
   const [error, setError] = useState('')
   const [retryKey, setRetryKey] = useState(0)
   const [muted, setMuted] = useState(true)
@@ -57,11 +72,33 @@ export function PlayerTile({ room }: { room: Room }) {
   const [volume, setVolume] = useState(0.72)
   const [danmakuOn, setDanmakuOn] = useState(true)
   const [fullscreen, setFullscreen] = useState(false)
+  const [showStats, setShowStats] = useState(false)
+  const [videoMeta, setVideoMeta] = useState({ width: 0, height: 0 })
+  const [bufferSeconds, setBufferSeconds] = useState(0)
   const [connection, setConnection] = useState<'idle' | 'connecting' | 'connected' | 'error'>('idle')
   const videoRef = useRef<HTMLVideoElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
+  const bufferingTimer = useRef<number | null>(null)
+  const loadTimer = useRef<number | null>(null)
   const recording = recordings.find((item) => item.roomId === room.roomId && item.status === 'recording')
   const selected = selectedId === room.id
+  const multiViewCapped = !focused && activeCount >= 5 && settings.multiViewQuality !== 'high'
+  const requestedQn = Number(quality)
+  const effectiveQn = multiViewCapped ? Math.min(requestedQn, 400) : requestedQn
+  const qualityLimited = !multiViewCapped && actualQuality !== null && requestedQn > actualQuality
+  const variant = info?.variants[0]
+  const qualityOptions = info?.qualities?.length ? info.qualities : DEMO_QUALITIES
+  const actualLabel =
+    qualityOptions.find((item) => item.quality === actualQuality)?.label ??
+    qualityOptions.find((item) => item.quality === variant?.quality)?.label ??
+    (variant?.quality ? QN_LABEL_FALLBACK[variant.quality] : undefined) ??
+    '连接中'
+  const qualityMenu =
+    actualQuality !== null && !qualityOptions.some((item) => item.quality === actualQuality)
+      ? [...qualityOptions, { quality: actualQuality, label: actualLabel }]
+      : qualityOptions
+  const displayQuality = actualQuality ?? variant?.quality ?? requestedQn
+  const fitMode = (focused ? 'contain' : settings.videoFit) === 'contain' ? 'contain' : 'cover'
 
   useEffect(() => {
     if (room.isDemo) return
@@ -92,12 +129,21 @@ export function PlayerTile({ room }: { room: Room }) {
     const video = videoRef.current
     setLoading(true)
     setError('')
+    if (loadTimer.current !== null) window.clearTimeout(loadTimer.current)
+    loadTimer.current = window.setTimeout(() => {
+      if (disposed) return
+      if (!video || video.readyState < 2) {
+        setLoading(false)
+        setError('接入超时，请刷新或换一个直播间')
+      }
+    }, 25_000)
 
     async function setup() {
       try {
-        const playback = await window.clearstage.player.resolve(room.id, Number(quality))
+        const playback = await window.clearstage.player.resolve(room.id, effectiveQn)
         if (disposed) return
         setInfo(playback)
+        setActualQuality(playback.variants[0]?.quality ?? null)
         const variant = playback.variants[0]
         if (!variant || !video) {
           setLoading(false)
@@ -107,28 +153,65 @@ export function PlayerTile({ room }: { room: Room }) {
         video.muted = true
         if (variant.protocol === 'hls') {
           if (Hls.isSupported()) {
+            let networkRetries = 0
+            let mediaRetries = 0
             hls = new Hls({
               enableWorker: true,
-              lowLatencyMode: true,
+              lowLatencyMode: false,
               backBufferLength: 30,
-              liveSyncDurationCount: 3,
-              maxLiveSyncPlaybackRate: 1.25
+              maxBufferLength: 30,
+              maxMaxBufferLength: 60,
+              maxBufferSize: 60 * 1000 * 1000,
+              liveSyncDurationCount: 6,
+              maxLiveSyncPlaybackRate: 1.05,
+              liveDurationInfinity: true,
+              startLevel: -1,
+              capLevelToPlayerSize: false,
+              manifestLoadingTimeOut: 20_000,
+              levelLoadingTimeOut: 20_000,
+              fragLoadingTimeOut: 25_000,
+              manifestLoadingMaxRetry: 3,
+              levelLoadingMaxRetry: 4,
+              fragLoadingMaxRetry: 6
             })
             hls.loadSource(variant.url)
             hls.attachMedia(video)
             hls.on(Hls.Events.MANIFEST_PARSED, () => {
+              setActualQuality((current) => current ?? variant.quality ?? null)
+              setError('')
               void video.play().catch(() => undefined)
+            })
+            hls.on(Hls.Events.FRAG_BUFFERED, () => {
+              setLoading(false)
+              setError('')
             })
             hls.on(Hls.Events.ERROR, (_event, data) => {
               if (!data.fatal) return
-              if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-                hls?.startLoad()
-              } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+              if (data.type === Hls.ErrorTypes.NETWORK_ERROR && settings.autoReconnect && networkRetries < 3) {
+                networkRetries += 1
+                window.setTimeout(() => {
+                  if (!disposed) hls?.startLoad()
+                }, 600 * networkRetries)
+                return
+              }
+              if (data.type === Hls.ErrorTypes.MEDIA_ERROR && mediaRetries < 2) {
+                mediaRetries += 1
                 hls?.recoverMediaError()
-              } else {
+                return
+              }
+              // Bilibili HLS often emits fatal buffer warnings while the
+              // already-buffered live edge keeps playing. Do not cover a
+              // healthy picture with a false "stream interrupted" panel.
+              window.setTimeout(() => {
+                if (disposed) return
+                if (!video.paused && video.readyState >= 2 && video.currentTime > 0) {
+                  setError('')
+                  setLoading(false)
+                  return
+                }
                 setError('直播流中断，请点击刷新重连')
                 setLoading(false)
-              }
+              }, 1800)
             })
           } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = variant.url
@@ -138,16 +221,28 @@ export function PlayerTile({ room }: { room: Room }) {
             setLoading(false)
           }
         } else if (mpegts.isSupported()) {
+          let flvRetries = 0
           flv = mpegts.createPlayer(
             { type: 'flv', isLive: true, url: variant.url, hasAudio: true, hasVideo: true },
             {
-              enableStashBuffer: false,
+              enableStashBuffer: true,
+              stashInitialSize: 1024,
               liveBufferLatencyChasing: true,
-              lazyLoad: false
+              liveBufferLatencyMaxLatency: 2.5,
+              liveBufferLatencyMinRemain: 1,
+              lazyLoad: false,
+              autoCleanupSourceBuffer: true
             }
           )
           flv.attachMediaElement(video)
           flv.on(mpegts.Events.ERROR, () => {
+            if (settings.autoReconnect && flvRetries < 2) {
+              flvRetries += 1
+              window.setTimeout(() => {
+                if (!disposed) setRetryKey((value) => value + 1)
+              }, 1200 * flvRetries)
+              return
+            }
             setError('FLV 直播流中断，请点击刷新重连')
             setLoading(false)
           })
@@ -170,6 +265,10 @@ export function PlayerTile({ room }: { room: Room }) {
     void setup()
     return () => {
       disposed = true
+      if (loadTimer.current !== null) {
+        window.clearTimeout(loadTimer.current)
+        loadTimer.current = null
+      }
       hls?.destroy()
       if (flv) {
         try {
@@ -186,7 +285,7 @@ export function PlayerTile({ room }: { room: Room }) {
         video.load()
       }
     }
-  }, [room.id, room.isDemo, quality, retryKey])
+  }, [room.id, room.isDemo, effectiveQn, retryKey, settings.autoReconnect])
 
   useEffect(() => {
     const video = videoRef.current
@@ -194,6 +293,26 @@ export function PlayerTile({ room }: { room: Room }) {
     video.muted = muted
     video.volume = volume
   }, [muted, volume])
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || room.isDemo) return
+    const update = (): void => {
+      setVideoMeta({ width: video.videoWidth, height: video.videoHeight })
+      if (video.buffered.length > 0) {
+        const end = video.buffered.end(video.buffered.length - 1)
+        setBufferSeconds(Math.max(0, end - video.currentTime))
+      }
+    }
+    video.addEventListener('loadedmetadata', update)
+    video.addEventListener('resize', update)
+    const timer = window.setInterval(update, 1500)
+    return () => {
+      window.clearInterval(timer)
+      video.removeEventListener('loadedmetadata', update)
+      video.removeEventListener('resize', update)
+    }
+  }, [room.id, room.isDemo, info])
 
   useEffect(() => {
     const handler = (): void => setFullscreen(document.fullscreenElement === stageRef.current)
@@ -207,6 +326,29 @@ export function PlayerTile({ room }: { room: Room }) {
     if (video.paused) void video.play()
     else video.pause()
   }
+
+  function clearBuffering(): void {
+    if (bufferingTimer.current !== null) {
+      window.clearTimeout(bufferingTimer.current)
+      bufferingTimer.current = null
+    }
+    setBuffering(false)
+  }
+
+  function showBufferingSoon(): void {
+    if (loading || bufferingTimer.current !== null) return
+    bufferingTimer.current = window.setTimeout(() => {
+      bufferingTimer.current = null
+      setBuffering(true)
+    }, 450)
+  }
+
+  useEffect(
+    () => () => {
+      if (bufferingTimer.current !== null) window.clearTimeout(bufferingTimer.current)
+    },
+    []
+  )
 
   async function toggleFullscreen() {
     if (!stageRef.current) return
@@ -243,17 +385,27 @@ export function PlayerTile({ room }: { room: Room }) {
       <div className="player-stage" ref={stageRef}>
         <video
           ref={videoRef}
-          className={`player-video ${room.isDemo ? 'is-hidden' : ''}`}
+          className={`player-video fit-${fitMode} ${room.isDemo ? 'is-hidden' : ''}`}
           playsInline
           muted={muted}
+          style={{ objectFit: fitMode }}
           onLoadedData={() => {
+            if (loadTimer.current !== null) {
+              window.clearTimeout(loadTimer.current)
+              loadTimer.current = null
+            }
             setLoading(false)
+            clearBuffering()
             setPaused(false)
           }}
           onPlaying={() => {
             setLoading(false)
+            clearBuffering()
             setPaused(false)
+            setError('')
           }}
+          onWaiting={() => showBufferingSoon()}
+          onCanPlay={() => clearBuffering()}
           onPause={() => setPaused(true)}
           onError={() => {
             if (!room.isDemo && info) {
@@ -264,6 +416,10 @@ export function PlayerTile({ room }: { room: Room }) {
           onClick={(event) => {
             event.stopPropagation()
             togglePlay()
+          }}
+          onDoubleClick={(event) => {
+            event.stopPropagation()
+            void toggleFullscreen()
           }}
         />
         {room.isDemo && <DemoStage room={room} />}
@@ -362,6 +518,24 @@ export function PlayerTile({ room }: { room: Room }) {
           </div>
         )}
 
+        {buffering && !loading && !error && (
+          <div className="player-buffering" aria-label="正在缓冲">
+            <Loader2 size={18} className="spin" />
+            <span>缓冲中</span>
+          </div>
+        )}
+
+        {showStats && !room.isDemo && (
+          <div className="stream-stats">
+            <div><span>画质</span><b>{actualLabel}</b></div>
+            <div><span>分辨率</span><b>{videoMeta.width > 0 ? `${videoMeta.width}×${videoMeta.height}` : '—'}</b></div>
+            <div><span>协议</span><b>{variant?.protocol?.toUpperCase() ?? '—'}</b></div>
+            <div><span>缓冲</span><b>{bufferSeconds.toFixed(1)}s</b></div>
+            {multiViewCapped && <em>多画面自动降载 · 可在设置中关闭</em>}
+            {qualityLimited && <em>当前账号 / 网络只提供「{actualLabel}」</em>}
+          </div>
+        )}
+
         {error && !loading && (
           <div className="player-error">
             <span className="error-icon">
@@ -436,22 +610,55 @@ export function PlayerTile({ room }: { room: Room }) {
           <span className={`danmaku-health ${connection === 'connected' || room.isDemo ? 'ok' : connection === 'error' ? 'bad' : ''}`}>
             <i /> 弹幕{connection === 'connected' || room.isDemo ? '在线' : connection === 'error' ? '受限' : '连接中'}
           </span>
+          {multiViewCapped && <span className="quality-cap">降载</span>}
+          {qualityLimited && (
+            <span className="quality-cap quality-login" title={auth.loggedIn ? 'B 站账号当前只提供此画质' : '登录 B 站后可尝试更高画质'}>
+              {auth.loggedIn ? '账号限制' : '登录解锁'}
+            </span>
+          )}
           <select
             className="quality-select"
-            value={quality}
+            value={String(displayQuality)}
             onChange={(event) => {
               event.stopPropagation()
+              const requested = Number(event.target.value)
               setQuality(event.target.value)
+              if (multiViewCapped && requested > 400) {
+                toast('info', '多画面自动降载', '5 路以上会把画面限制到蓝光；可在设置中关闭。')
+              } else if (actualQuality !== null && requested > actualQuality) {
+                toast('info', '当前画质受限', `实际提供「${actualLabel}」。登录 B 站或提升账号权限后可解锁更高画质。`)
+              }
             }}
             onClick={(event) => event.stopPropagation()}
-            title="画质"
+            title={`画质（当前实际：${actualLabel}${multiViewCapped ? '，多画面自动降载' : ''}${qualityLimited ? '，更高画质受账号或网络限制' : ''}）`}
+            disabled={room.isDemo}
           >
-            {(info?.qualities?.length ? info.qualities : DEMO_QUALITIES).map((item) => (
+            {qualityMenu.map((item) => (
               <option key={item.quality} value={String(item.quality)}>
                 {item.label}
               </option>
             ))}
           </select>
+          <button
+            className={`ctrl-btn ${showStats ? 'is-active' : ''}`}
+            title={`${showStats ? '隐藏' : '显示'}码流信息`}
+            onClick={(event) => {
+              event.stopPropagation()
+              setShowStats((value) => !value)
+            }}
+          >
+            <Activity size={14} />
+          </button>
+          <button
+            className="ctrl-btn fit-btn"
+            title={fitMode === 'cover' ? '当前：裁剪填充，点击完整显示' : '当前：完整显示，点击裁剪填充'}
+            onClick={(event) => {
+              event.stopPropagation()
+              void updateSettings({ videoFit: fitMode === 'cover' ? 'contain' : 'cover' })
+            }}
+          >
+            <Scaling size={14} />
+          </button>
           <button
             className={`ctrl-btn record-btn ${recording ? 'is-recording' : ''}`}
             title={recording ? '停止录制' : '开始录制'}

@@ -224,11 +224,11 @@ export function SettingsView() {
               <div className="settings-section-head">
                 <span className="eyebrow">PLAYBACK</span>
                 <h2>播放偏好</h2>
-                <p>默认画质会在每次接入直播时使用；B 站未登录时可能只能拿到较低画质。</p>
+                <p>默认画质会在每次接入直播时使用。未登录时 B 站通常最高只提供超清 720P；登录后按账号权限提供蓝光或原画。</p>
               </div>
               <div className="settings-card">
                 <div className="settings-row">
-                  <div><b>默认画质</b><p>直播流支持的最高画质可能受账号与网络影响。</p></div>
+                  <div><b>默认画质</b><p>直播流支持的最高画质可能受账号、粉丝等级与网络影响。</p></div>
                   <select
                     value={settings.defaultQuality}
                     onChange={(event) => void updateSettings({ defaultQuality: Number(event.target.value) })}
@@ -237,10 +237,31 @@ export function SettingsView() {
                     <option value={400}>蓝光</option>
                     <option value={250}>超清</option>
                     <option value={150}>高清</option>
+                    <option value={80}>流畅</option>
                   </select>
                 </div>
                 <div className="settings-row">
-                  <div><b>默认布局</b><p>直播台打开时的画面格数。</p></div>
+                  <div><b>画面适配</b><p>16:9 画面铺满；非 16:9 流可选择完整显示，避免裁切。</p></div>
+                  <select
+                    value={settings.videoFit ?? 'cover'}
+                    onChange={(event) => void updateSettings({ videoFit: event.target.value === 'contain' ? 'contain' : 'cover' })}
+                  >
+                    <option value="cover">裁剪填充（铺满画面）</option>
+                    <option value="contain">完整显示（保留黑边）</option>
+                  </select>
+                </div>
+                <div className="settings-row">
+                  <div><b>多画面自动降载</b><p>同时打开 5 路以上时，把所有画面限制到蓝光，降低解码与带宽压力；单路不受影响。</p></div>
+                  <select
+                    value={settings.multiViewQuality ?? 'auto'}
+                    onChange={(event) => void updateSettings({ multiViewQuality: event.target.value === 'high' ? 'high' : 'auto' })}
+                  >
+                    <option value="auto">自动降载（推荐）</option>
+                    <option value="high">保持手动画质</option>
+                  </select>
+                </div>
+                <div className="settings-row">
+                  <div><b>默认布局</b><p>直播台打开时的画面格数容量；画面会按实际路数自适应排成 16:9。</p></div>
                   <div className="layout-switch inline">
                     {['1', '2', '4', '6', '9'].map((value) => (
                       <button

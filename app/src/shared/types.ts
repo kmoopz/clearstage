@@ -222,6 +222,8 @@ export interface AppSettings {
   ffmpegPath: string
   defaultQuality: number
   layout: string
+  videoFit: 'cover' | 'contain'
+  multiViewQuality: 'auto' | 'high'
   autoReconnect: boolean
   notifications: boolean
   danmaku: DanmakuSettings

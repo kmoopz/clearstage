@@ -1,9 +1,11 @@
-import { useMemo } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { Room } from '../../../shared/types'
 import {
   Grid2X2,
   LayoutGrid,
+  Maximize2,
   MessageSquare,
+  Minimize2,
   Palette,
   PanelRightOpen,
   Plus,
@@ -15,6 +17,54 @@ import { PlayerTile } from '../components/PlayerTile'
 import { InteractionPanel } from '../components/InteractionPanel'
 import { initials } from '../lib/format'
 
+const GRID_GAP = 11
+
+interface GridPlan {
+  columns: number
+  rows: number
+  tileWidth: number
+  tileHeight: number
+  ready: boolean
+}
+
+function planGrid(
+  count: number,
+  layout: string,
+  width: number,
+  height: number,
+  focused: boolean
+): GridPlan {
+  const fallbackColumns = layout === '1' ? 1 : layout === '2' || layout === '4' ? Math.min(2, Math.max(1, count)) : count <= 4 ? Math.min(2, Math.max(1, count)) : 3
+  if (focused) {
+    return {
+      columns: 1,
+      rows: 1,
+      tileWidth: Math.max(0, width),
+      tileHeight: Math.max(0, height),
+      ready: width > 0 && height > 0
+    }
+  }
+  if (count <= 0) return { columns: 1, rows: 1, tileWidth: 0, tileHeight: 0, ready: false }
+  const columns = Math.min(count, fallbackColumns)
+  const rows = Math.ceil(count / columns)
+  if (width <= 0 || height <= 0) {
+    return { columns, rows, tileWidth: 0, tileHeight: 0, ready: false }
+  }
+  const cellWidth = (width - GRID_GAP * (columns - 1)) / columns
+  const cellHeight = (height - GRID_GAP * (rows - 1)) / rows
+  if (cellWidth <= 0 || cellHeight <= 0) {
+    return { columns, rows, tileWidth: 0, tileHeight: 0, ready: false }
+  }
+  const cellRatio = 16 / 9
+  let tileWidth = cellWidth
+  let tileHeight = cellWidth / cellRatio
+  if (tileHeight > cellHeight) {
+    tileHeight = cellHeight
+    tileWidth = cellHeight * cellRatio
+  }
+  return { columns, rows, tileWidth, tileHeight, ready: true }
+}
+
 export function LiveView() {
   const rooms = useAppStore((state) => state.rooms)
   const activeIds = useAppStore((state) => state.activeIds)
@@ -25,17 +75,58 @@ export function LiveView() {
   const chatOpen = useAppStore((state) => state.chatOpen)
   const setChatOpen = useAppStore((state) => state.setChatOpen)
   const recordings = useAppStore((state) => state.recordings)
+  const selectedId = useAppStore((state) => state.selectedId)
+  const gridRef = useRef<HTMLDivElement>(null)
+  const [gridSize, setGridSize] = useState({ width: 0, height: 0 })
+  const [focusId, setFocusId] = useState<string | null>(null)
 
   const activeRooms = useMemo(
     () => activeIds.map((id) => rooms.find((room) => room.id === id)).filter((room): room is Room => Boolean(room)),
     [activeIds, rooms]
   )
   const capacity = Number(layout) || 4
-  const showAdd = activeRooms.length > 0 && activeRooms.length < Math.min(capacity, 9)
-  const tileCount = activeRooms.length + (showAdd ? 1 : 0)
-  const columns = tileCount <= 1 ? 1 : Number(layout) >= 6 ? 3 : 2
+  const focusedRoom = focusId ? activeRooms.find((room) => room.id === focusId) : undefined
+  const displayRooms = focusedRoom ? [focusedRoom] : activeRooms
+  const showAdd = !focusedRoom && displayRooms.length > 1 && displayRooms.length < Math.min(capacity, 9)
+  const tileCount = displayRooms.length + (showAdd ? 1 : 0)
   const liveCount = activeRooms.filter((room) => room.liveStatus === 'live').length
   const recordingCount = recordings.filter((item) => item.status === 'recording').length
+  const plan = useMemo(
+    () => planGrid(tileCount, layout, gridSize.width, gridSize.height, Boolean(focusedRoom)),
+    [tileCount, layout, gridSize.width, gridSize.height, focusedRoom]
+  )
+  const gridStyle = plan.ready
+    ? {
+        gridTemplateColumns: `repeat(${plan.columns}, ${plan.tileWidth}px)`,
+        gridTemplateRows: `repeat(${plan.rows}, ${plan.tileHeight}px)`,
+        gap: `${GRID_GAP}px`
+      }
+    : { gridTemplateColumns: `repeat(${plan.columns}, minmax(0, 1fr))` }
+
+  useLayoutEffect(() => {
+    const element = gridRef.current
+    if (!element) return
+    const measure = (): void => {
+      setGridSize({ width: element.clientWidth, height: element.clientHeight })
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [displayRooms.length, chatOpen, focusedRoom])
+
+  useEffect(() => {
+    if (focusId && !activeRooms.some((room) => room.id === focusId)) setFocusId(null)
+  }, [activeRooms, focusId])
+
+  useEffect(() => {
+    if (!focusId) return
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') setFocusId(null)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [focusId])
 
   return (
     <section className="view live-view">
@@ -48,17 +139,28 @@ export function LiveView() {
           </h1>
           <p>
             {activeRooms.length > 0
-              ? `${activeRooms.length} 路画面 · ${liveCount} 路直播中${recordingCount ? ` · ${recordingCount} 路正在录制` : ''}`
-              : '添加 B 站直播间，或接入你有权访问的 HLS / FLV 直链。'}
+              ? `${activeRooms.length} 路画面 · ${liveCount} 路直播中${recordingCount ? ` · ${recordingCount} 路正在录制` : ''}${focusedRoom ? ' · 专注模式' : plan.ready ? ` · 自动 ${plan.columns}×${plan.rows}` : ''}`
+              : '添加 B 直播间，或接入你有权访问的 HLS / FLV 直链。'}
           </p>
         </div>
         <div className="page-head-actions">
+          {activeRooms.length > 0 && (
+            <button
+              className={`btn btn-ghost btn-sm ${focusedRoom ? 'is-active' : ''}`}
+              title={focusedRoom ? '返回多画面' : '只保留当前画面，减少解码压力'}
+              onClick={() => setFocusId(focusedRoom ? null : selectedId)}
+              disabled={!focusedRoom && !selectedId}
+            >
+              {focusedRoom ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+              {focusedRoom ? '退出专注' : '专注当前'}
+            </button>
+          )}
           {!chatOpen && (
             <button className="btn btn-ghost btn-sm" onClick={() => setChatOpen(true)}>
               <PanelRightOpen size={14} /> 互动
             </button>
           )}
-          <div className="layout-switch" title="画面布局">
+          <div className="layout-switch" title="画面格数容量；画面会按实际路数自适应">
             <Grid2X2 size={14} />
             {['1', '2', '4', '6', '9'].map((value) => (
               <button
@@ -130,13 +232,14 @@ export function LiveView() {
           </div>
         </div>
       ) : (
-        <div className={`live-layout ${chatOpen ? 'with-chat' : 'without-chat'}`}>
+        <div className={`live-layout ${chatOpen ? 'with-chat' : 'without-chat'} ${focusedRoom ? 'is-focused' : ''}`}>
           <div
-            className={`live-grid layout-${layout}`}
-            style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+            ref={gridRef}
+            className={`live-grid layout-${layout} ${plan.ready ? 'is-sized' : ''} ${focusedRoom ? 'is-focused' : ''}`}
+            style={gridStyle}
           >
-            {activeRooms.map((room) => (
-              <PlayerTile key={room.id} room={room} />
+            {displayRooms.map((room) => (
+              <PlayerTile key={room.id} room={room} focused={Boolean(focusedRoom)} />
             ))}
             {showAdd && (
               <button className="add-tile" onClick={() => setAddRoomOpen(true)}>
@@ -149,6 +252,11 @@ export function LiveView() {
                   <LayoutGrid size={12} /> {activeRooms.length}/{layout} 格
                 </span>
               </button>
+            )}
+            {plan.ready && (
+              <span className="live-grid-meta">
+                {focusedRoom ? '专注模式 · 仅当前画面' : `自动排布 ${plan.columns}×${plan.rows} · 每路 16:9`}
+              </span>
             )}
           </div>
           {chatOpen ? (

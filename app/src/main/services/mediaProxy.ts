@@ -112,6 +112,7 @@ export class MediaProxy {
     const headers: Record<string, string> = {
       'user-agent': entry.headers['user-agent'] ?? UA,
       accept: '*/*',
+      'accept-encoding': 'identity',
       'accept-language': 'zh-CN,zh;q=0.9',
       ...entry.headers
     }
@@ -129,7 +130,7 @@ export class MediaProxy {
     if (range) headers.range = range
 
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 20_000)
+    const timeout = setTimeout(() => controller.abort(), 30_000)
     let upstream: Response
     try {
       upstream = await fetch(entry.url, {
@@ -137,6 +138,12 @@ export class MediaProxy {
         redirect: 'follow',
         signal: controller.signal
       })
+    } catch (error) {
+      if (controller.signal.aborted && !res.writableEnded) {
+        res.destroy()
+        return
+      }
+      throw error
     } finally {
       clearTimeout(timeout)
     }

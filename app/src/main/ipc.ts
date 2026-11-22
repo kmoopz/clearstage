@@ -312,7 +312,7 @@ export function rawStreamResolver(
         Number.isFinite(numericQuality) && numericQuality > 0 ? numericQuality : store.data.settings.defaultQuality,
         (url) => url
       )
-      const variant = play.variants[0]
+      const variant = play.variants.find((item) => item.protocol === 'hls') ?? play.variants[0]
       if (!variant) throw new Error(play.hint || 'B站没有返回可用的直播流')
       return {
         url: variant.url,

@@ -6,6 +6,33 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const owner = process.env.CLEARSTAGE_GH_OWNER || 'kmoopz'
 const repo = process.env.CLEARSTAGE_GH_REPO || 'clearstage'
 const tag = 'v0.1.0'
+const releaseBody = `## 澄幕 ClearStage 0.1.0
+
+### 本次更新
+- 多画面按实际路数自适应排成 16:9 网格，修复画面拉伸、比例错误和单路被「添加画面」挤占的问题。
+- 新增「专注当前」：只保留选中画面，其余播放器停止解码；退出或重启后恢复上次的多画面组合。
+- B 站直播改为优先 HTTP-FLV 连续缓冲，HLS 保留给直链和兼容回退；修复播放到直播边缘后冻结、误报「直播流中断」和缓冲不足。
+- 画质菜单显示实际画质；新增码流 HUD（画质 / 分辨率 / 协议 / 缓冲）、完整显示 / 裁剪填充、5 路以上自动降载。
+- 未登录时 B 站通常最高只提供超清 720P；播放器会显示「登录解锁」或「账号限制」，登录后按账号权限提供蓝光/原画。
+- 媒体代理延长分片超时、关闭提前中断并避免压缩媒体分片，减少多路同时播放时的偶发卡顿。
+
+### Windows 10 / 11 x64
+- 安装程序：\`ClearStage-Setup-0.1.0.exe\`。安装包内置 ClearStage 自签名证书并自动导入当前用户信任存储，无需二次下载证书。
+- 便携包：完整解压后运行 \`ClearStage.exe\`。包内含证书和 \`Install-Certificate.cmd\`。
+- 首次运行自签名安装包仍可能提示未知发布者，选择“更多信息 → 仍要运行”即可；彻底消除需要 CA 证书。
+
+### Linux x64
+- 下载 \`ClearStage-0.1.0-linux-x64.AppImage\`，\`chmod +x\` 后运行。
+- 需要 FUSE；若系统限制用户命名空间，可临时使用 \`--no-sandbox\`，具体见文档。
+- Linux 构建未签名。
+
+### macOS 13+（Intel / Apple Silicon）
+- 下载对应架构的 zip，解压后把「澄幕.app」拖入 Applications。
+- 当前为 ad-hoc 签名，没有 Apple Developer ID、未公证；首次打开若被 Gatekeeper 拦截，请右键「打开」或执行 \`xattr -cr "/Applications/澄幕.app"\`。
+- 当前没有 Apple 签名证书，无法提供无提示的正式 macOS 分发。
+
+官网：https://kmoopz.github.io/clearstage/
+`
 const replaceAssets = process.argv.includes('--replace-assets')
 const tokenFile = process.argv.find((value) => value.startsWith('--token-file='))?.split('=')[1]
 const token = (tokenFile ? fs.readFileSync(tokenFile, 'utf8') : process.env.CLEARSTAGE_GH_TOKEN || '').trim()
@@ -177,7 +204,7 @@ async function publishRelease() {
   try {
     release = await request('GET', `${api}/repos/${owner}/${repo}/releases/tags/${tag}`)
     release = await request('PATCH', `${api}/repos/${owner}/${repo}/releases/${release.id}`, {
-      body: '澄幕 ClearStage 0.1.0 Windows / Linux / macOS 公测版。Windows 安装包内置 ClearStage 代码签名证书并在安装时自动导入；便携包包含证书和 Install-Certificate.cmd，无需二次下载。macOS 为 ad-hoc 签名、未公证；Linux AppImage 未签名。首次运行 Windows 自签名安装包仍可能提示未知发布者，这是证书在安装程序启动前尚未受信任导致的。'
+      body: releaseBody
     })
   } catch (error) {
     if (error.status !== 404) throw error
@@ -185,7 +212,7 @@ async function publishRelease() {
       tag_name: tag,
       target_commitish: 'main',
       name: 'ClearStage 0.1.0',
-      body: '澄幕 ClearStage 0.1.0 Windows / Linux / macOS 公测版。Windows 安装包内置 ClearStage 代码签名证书并在安装时自动导入；便携包包含证书和 Install-Certificate.cmd，无需二次下载。macOS 为 ad-hoc 签名、未公证；Linux AppImage 未签名。首次运行 Windows 自签名安装包仍可能提示未知发布者，这是证书在安装程序启动前尚未受信任导致的。',
+      body: releaseBody,
       draft: false,
       prerelease: false
     })

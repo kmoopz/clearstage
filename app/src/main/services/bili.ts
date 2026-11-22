@@ -479,12 +479,13 @@ export class BiliClient {
         }
       }
     }
-    variants.sort((a, b) => (a.protocol === 'hls' ? -1 : 1) - (b.protocol === 'hls' ? -1 : 1))
+    // HTTP-FLV keeps a continuous MSE buffer and is less prone to edge stalls than Bilibili live HLS; prefer it and keep HLS as the next fallback.
+    variants.sort((a, b) => (a.protocol === 'flv' ? -1 : 1) - (b.protocol === 'flv' ? -1 : 1))
     const selected = variants[0]
     return {
       roomId: room.roomId,
       title: room.title,
-      variants: selected ? [selected] : [],
+      variants,
       defaultVariantId: selected?.id ?? '',
       qualities: [...available.entries()]
         .map(([quality, label]) => ({ quality, label }))

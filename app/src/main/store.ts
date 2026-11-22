@@ -54,6 +54,8 @@ export function defaultSettings(): AppSettings {
     ffmpegPath: '',
     defaultQuality: 10000,
     layout: '4',
+    videoFit: 'cover',
+    multiViewQuality: 'auto',
     autoReconnect: true,
     notifications: true,
     danmaku: { ...DEFAULT_DANMAKU },

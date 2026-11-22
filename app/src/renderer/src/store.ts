@@ -39,6 +39,8 @@ const FALLBACK_SETTINGS: AppSettings = {
   ffmpegPath: '',
   defaultQuality: 10000,
   layout: '4',
+  videoFit: 'cover',
+  multiViewQuality: 'auto',
   autoReconnect: true,
   notifications: true,
   danmaku: { fontSize: 16, opacity: 0.92, showGifts: true, showEnter: false, area: 72 },
@@ -112,6 +114,28 @@ function initialPage(): Page {
   return valid.includes(raw as Page) ? (raw as Page) : 'live'
 }
 
+const ACTIVE_ROOMS_KEY = 'clearstage.activeRoomIds'
+
+function savedActiveIds(rooms: Room[]): string[] {
+  try {
+    const raw = JSON.parse(localStorage.getItem(ACTIVE_ROOMS_KEY) ?? '[]') as unknown
+    if (!Array.isArray(raw)) return []
+    return raw
+      .filter((id): id is string => typeof id === 'string' && rooms.some((room) => room.id === id))
+      .slice(0, 9)
+  } catch {
+    return []
+  }
+}
+
+function persistActiveIds(ids: string[]): void {
+  try {
+    localStorage.setItem(ACTIVE_ROOMS_KEY, JSON.stringify(ids.slice(0, 9)))
+  } catch {
+    // localStorage can be unavailable in hardened profiles; persistence is optional.
+  }
+}
+
 export const useAppStore = create<AppState>((set, get) => ({
   booted: false,
   info: null,
@@ -167,7 +191,8 @@ export const useAppStore = create<AppState>((set, get) => ({
         })
         return
       }
-      const opening = rooms.slice(0, 1).map((room) => room.id)
+      const saved = savedActiveIds(rooms)
+      const opening = saved.length > 0 ? saved : rooms.slice(0, 1).map((room) => room.id)
       set({
         booted: true,
         info,
@@ -179,6 +204,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       })
       void get().loadLibrary()
       void get().loadAuth()
+      persistActiveIds(opening)
       if (opening[0]) void window.clearstage.rooms.setActive(opening)
     } catch (error) {
       set({
@@ -211,6 +237,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   setActiveRooms(ids) {
     const activeIds = ids.filter((id) => get().rooms.some((room) => room.id === id)).slice(0, 9)
     set({ activeIds })
+    persistActiveIds(activeIds)
     void window.clearstage.rooms.setActive(activeIds)
   },
   async setLayout(layout) {
@@ -226,6 +253,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     const { activeIds, rooms } = get()
     if (activeIds.includes(roomId)) {
       const next = activeIds.filter((id) => id !== roomId)
+      persistActiveIds(next)
       set({
         activeIds: next,
         selectedId: get().selectedId === roomId ? (next[0] ?? null) : get().selectedId
@@ -239,6 +267,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
     if (!rooms.some((room) => room.id === roomId)) return
     const next = [...activeIds, roomId]
+    persistActiveIds(next)
     set({ activeIds: next, selectedId: roomId })
     void window.clearstage.rooms.setActive(next)
   },
@@ -257,6 +286,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         const activeIds = state.activeIds.includes(room.id)
           ? state.activeIds
           : [...state.activeIds, room.id].slice(0, 9)
+        persistActiveIds(activeIds)
         return {
           rooms,
           activeIds,
@@ -281,6 +311,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       set((state) => {
         const rooms = state.rooms.filter((room) => room.id !== roomId)
         const activeIds = state.activeIds.filter((id) => id !== roomId)
+        persistActiveIds(activeIds)
         return {
           rooms,
           activeIds,
